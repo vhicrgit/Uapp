@@ -8,39 +8,38 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/text_1"
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:text="Hello UI Widgets"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="#6D4FA3"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:textAllCaps="false"/>
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:hint="Type something here"/>
+
+    <ImageView
+        android:id="@+id/image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/img_1"/>
 
-    <Button
-        android:id="@+id/button_2"
+    <ProgressBar
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="First Activity"/>
-
-
-
-    <Button
-        android:id="@+id/button_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Second Activity"/>
-
-    <Button
-        android:id="@+id/button_4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Third Activity"/>
-
-    <Button
-        android:id="@+id/button_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Finish"/>
-
-
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
