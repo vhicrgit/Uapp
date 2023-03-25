@@ -1,20 +1,19 @@
 package com.example.uapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
+
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,64 +24,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editText = (EditText) findViewById(R.id.edit);
-        String inputText = load();
-        if(!TextUtils.isEmpty(inputText)) {
-            editText.setText(inputText);
-            editText.setSelection(inputText.length());
-            Toast.makeText(this, "Restoring succeeded", Toast.LENGTH_SHORT).show();
+        Button makeCall = (Button) findViewById(R.id.make_call);
+        makeCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.CALL_PHONE}, 1);
+                } else {
+                    call();
+                }
+            }
+        });
+    }
+
+    private void call() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:10086"));
+            startActivity(intent);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        String inputText = editText.getText().toString();
-        save(inputText);
-    }
-
-    public void save(String inputText) {
-        FileOutputStream fout = null;
-        BufferedWriter writer = null;
-        try {
-            fout = openFileOutput("data", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(fout));
-            writer.write(inputText);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    call();
+                } else {
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                break;
+            default:
         }
     }
 
-    public String load() {
-        FileInputStream fin = null;
-        BufferedReader reader = null;
-        StringBuilder content = new StringBuilder();
-        try {
-            fin = openFileInput("data");
-            reader = new BufferedReader(new InputStreamReader(fin));
-            String line = "";
-            while((line = reader.readLine()) != null) {
-                content.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return content.toString();
-    }
 }

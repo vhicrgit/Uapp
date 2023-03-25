@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <EditText
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Type something here"
-        android:id="@+id/edit"/>
+        android:id="@+id/make_call"
+        android:text="Make Call"/>
 </LinearLayout>
