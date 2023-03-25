@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/force_offline"
-        android:text="Send force offline broadcast"/>
+        android:hint="Type something here"
+        android:id="@+id/edit"/>
 </LinearLayout>
