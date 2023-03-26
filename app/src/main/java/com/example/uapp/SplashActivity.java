@@ -3,43 +3,69 @@ package com.example.uapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
+
+    private static final int DELAY_TIME = 3000;  // 单位ms
+    private static final int GO_MAIN = 100;
+    private static final int GO_GUIDE = 101;
     private Button button;
+    private UappTimer timer;
+
+    private boolean isFirst;
+
     private Handler handler = new Handler();
-    UappTimer timer;
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            toMainActivity();
+            if(isFirst) {
+                startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+
+            } else {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            }
+            finish();
         }
     };
 
-    private void toMainActivity() {
-        startActivity(new Intent(this, MainActivity_main.class));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initViews();
-        handler.postDelayed(runnable, 3000);
+        setContentView(R.layout.activity_splash);
+
+        button = (Button) findViewById(R.id.button);
+
+        SharedPreferences sfile = getSharedPreferences("data", MODE_PRIVATE);  // 判断用户是否第一次进入,如果是，进入引导页
+        isFirst = sfile.getBoolean("isFirst", true);
+        SharedPreferences.Editor editor = sfile.edit();
+        if(isFirst) {
+            editor.putBoolean("isFirst", false);
+        }
+        editor.commit();
+
         timer = new UappTimer(4000, 1000);
         timer.start();
-    }
 
-    private void initViews() {
-        button = (Button) findViewById(R.id.button);
+        handler.postDelayed(runnable, DELAY_TIME);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toMainActivity();
+                if(isFirst) {
+                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
+
+                } else {
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                }
+                finish();
             }
         });
     }
@@ -49,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         public UappTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
-
         @Override
         public void onTick(long l) {
             button.setText(l/1000 + "秒");
