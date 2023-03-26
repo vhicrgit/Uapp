@@ -23,3 +23,14 @@
     - 作用: 引导用户了解产品特色、关键功能(可以直接写在App里，一般是3-5屏左右、"立即体验")
     - 使用场景: 用户首次安装或者版本更新后、第一次打开App的时候出现、之后不再出现
 ```
+
+#### 搭建主页面导航框架
+
+```
+使用 Activity + Navigation + Fragment 搭建
+Navigation分为三大件:
+    导航图: 读取待切换目标及路径
+    NavHost: 包含各个fragment的容器
+    NavController: 再得知切换目标时,控制NavHost去显示这个fragment
+```
+

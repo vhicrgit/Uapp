@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedNavigation"
+    app:startDestination="@id/afragment"
+    android:id="@+id/uapp_navigation">
+    <fragment
+        android:id="@+id/afragment"
+        android:name="com.example.uapp.AFragment"
+        android:label="afragment"
+        tools:layout="@layout/fragment_a">
+        <action
+            android:id="@+id/action_afragment_to_bfragment"
+            app:destination="@+id/bfragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/bfragment"
+        android:name="com.example.uapp.BFragment"
+        android:label="afragment"
+        tools:layout="@layout/fragment_b"/>
+    <fragment
+        android:id="@+id/cfragment"
+        android:name="com.example.uapp.CFragment"
+        android:label="afragment"
+        tools:layout="@layout/fragment_c"/>
+    <fragment
+        android:id="@+id/dfragment"
+        android:name="com.example.uapp.DFragment"
+        android:label="afragment"
+        tools:layout="@layout/fragment_d"/>
+    <fragment
+        android:id="@+id/efragment"
+        android:name="com.example.uapp.EFragment"
+        android:label="afragment"
+        tools:layout="@layout/fragment_e"/>
+
+</navigation>
