@@ -3,41 +3,90 @@ package com.example.uapp;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.uapp.bean.ImagePart;
+import com.example.uapp.config.Config;
+import com.example.uapp.task.GetAddressTask;
+import com.example.uapp.util.DateUtil;
+import com.example.uapp.util.SocketUtil;
+
+import java.io.ByteArrayOutputStream;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 
 public class MineFragment extends Fragment {
-
-    private Button buttonTakePhoto;
-    private Button buttonGetLocation;
-    private Button buttonUploadPhoto;
+    private final Map<String,String> providerMap = new HashMap<>();
     private ImageView imageShow;
     private TextView textLocation;
 
+    private String mLocationDesc = ""; // 定位说明
+    private LocationManager mLocationMgr; // 声明一个定位管理器对象
+    private final Criteria criteria = new Criteria(); // 创建一个定位准则对象
+    private final Handler mHandler = new Handler(Looper.myLooper()); // 声明一个处理器对象
+    private boolean isLocationEnable = false; // 定位服务是否可用
+
     private static final int GET_THUMBNAIL_CODE = 1;
-    private static final int GET_GPS_CODE = 2;
-    private static final int REQUEST_LOCATION_PERMISSION_CODE = 1;
-    private static final int REQUEST_CAMERA_PERMISSION_CODE = 2;
+    private Bitmap mBitmap; // 位图对象
+
+    private static final String mFileName = "lost item"; // 图片名称
+    private Socket mSocket; // 声明一个套接字对象
+
+    // 定义一个刷新任务，若无法定位则每隔一秒就尝试定位
+    private final Runnable mRefresh = new Runnable() {
+        @Override
+        public void run() {
+            if (!isLocationEnable) {
+                initLocation(); // 初始化定位服务
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
+
+    // 定义一个位置变更监听器
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            showLocation(location); // 显示定位结果文本
+        }
+
+        @Override
+        public void onProviderDisabled(String arg0) {}
+
+        @Override
+        public void onProviderEnabled(String arg0) {}
+
+        @Override
+        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+    };
 
 
 
@@ -45,51 +94,95 @@ public class MineFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mine, container, false);
-        buttonGetLocation = view.findViewById(R.id.get_location);
-        buttonTakePhoto = view.findViewById(R.id.take_photo);
-        buttonUploadPhoto = view.findViewById(R.id.upload_photo);
+        Button buttonTakePhoto = view.findViewById(R.id.take_photo);
+        Button buttonUploadPhoto = view.findViewById(R.id.upload_photo);
         imageShow = view.findViewById(R.id.show_photo);
         textLocation = view.findViewById(R.id.show_location);
 
-        initLocation();
+        providerMap.put("gps", "卫星定位");
+        providerMap.put("network", "网络定位");
+
 
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(photoIntent, GET_THUMBNAIL_CODE);
+            }
+        });
 
-                if(ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{ android.Manifest.permission.CAMERA },
-                        REQUEST_CAMERA_PERMISSION_CODE);
-                } else {
-                    Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(photoIntent, GET_THUMBNAIL_CODE);
-                }
+        buttonUploadPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBitmap =  ((BitmapDrawable)imageShow.getDrawable()).getBitmap();
+                sendImage();
             }
         });
 
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHandler.removeCallbacks(mRefresh); // 移除定位刷新任务
+        initLocation(); // 初始化定位服务
+        mHandler.postDelayed(mRefresh, 100); // 延迟100毫秒启动定位刷新任务
+        // 初始化套接字
+        initSocket();
+    }
+
+    // 初始化定位服务
     private void initLocation() {
+        // 从系统服务中获取定位管理器
+        mLocationMgr = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE); // 设置定位精确度
+        criteria.setAltitudeRequired(true); // 设置是否需要海拔信息
+        criteria.setBearingRequired(true); // 设置是否需要方位信息
+        criteria.setCostAllowed(true); // 设置是否允许运营商收费
+        criteria.setPowerRequirement(Criteria.POWER_LOW); // 设置对电源的需求
+        // 获取定位管理器的最佳定位提供者
+        String bestProvider = mLocationMgr.getBestProvider(criteria, true);
 
-        if(ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.INTERNET)!= PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.ACCESS_NETWORK_STATE)!= PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.ACCESS_WIFI_STATE)!= PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission( getActivity(),android.Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED
+        if (bestProvider != null && mLocationMgr.isProviderEnabled(bestProvider)) { // 定位提供者当前可用
+            textLocation.setText("正在获取" + providerMap.get(bestProvider) + "对象");
+            mLocationDesc = String.format("定位类型为%s", providerMap.get(bestProvider));
+            beginLocation(bestProvider); // 开始定位
+            isLocationEnable = true;
+        } else { // 定位提供者暂不可用
+            textLocation.setText(providerMap.get(bestProvider) + "不可用");
+            isLocationEnable = false;
+        }
+    }
 
+    // 开始定位
+    @SuppressLint("MissingPermission")
+    private void beginLocation(String method) {
+        // 设置定位管理器的位置变更监听器
+        mLocationMgr.requestLocationUpdates(method, 300, 0, mLocationListener);
+        // 获取最后一次成功定位的位置信息
+        Location location = mLocationMgr.getLastKnownLocation(method);
+        showLocation(location); // 显示定位结果文本
+    }
 
-        ) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{ android.Manifest.permission.INTERNET,
-                            android.Manifest.permission.ACCESS_NETWORK_STATE,
-                            android.Manifest.permission.ACCESS_WIFI_STATE,
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            android.Manifest.permission.READ_PHONE_STATE
-                    },
-                    REQUEST_LOCATION_PERMISSION_CODE);
-            return ;
+    // 设置定位结果文本
+    private void showLocation(Location location) {
+        if (location != null) {
+            // 创建一个根据经纬度查询详细地址的任务
+            GetAddressTask task = new GetAddressTask(getActivity(), location, address -> {
+                @SuppressLint("DefaultLocale") String desc = String.format("%s\n定位信息如下： " +
+                                "\n\t定位时间为%s，" + "\n\t经度为%f，纬度为%f，" +
+                                "\n\t高度为%d米，精度为%d米，" +
+                                "\n\t详细地址为%s。",
+                        mLocationDesc, DateUtil.formatDate(location.getTime()),
+                        location.getLongitude(), location.getLatitude(),
+                        Math.round(location.getAltitude()), Math.round(location.getAccuracy()),
+                        address);
+                textLocation.setText(desc);
+            });
+            task.start(); // 启动地址查询任务
+        } else {
+            textLocation.setText(mLocationDesc + "\n暂未获取到定位对象");
         }
     }
 
@@ -108,20 +201,49 @@ public class MineFragment extends Fragment {
         }
     }
 
-    @SuppressLint("MissingPermission")
     @Override
-    public void onRequestPermissionsResult(int requestCode,String[] permissions, int[] grantResults) {
-        switch(requestCode) {
-            case REQUEST_CAMERA_PERMISSION_CODE:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //权限获取成功
-                    Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(photoIntent, GET_THUMBNAIL_CODE);
-                }else{
-                    //权限被拒绝
-                    Toast.makeText(getActivity(), "用户拒绝授予权限", Toast.LENGTH_SHORT).show();
-                }
-                break;
+    public void onDestroy() {
+        super.onDestroy();
+        mLocationMgr.removeUpdates(mLocationListener); // 移除定位管理器的位置变更监听器
+    }
+
+    // 初始化套接字
+    private void initSocket() {
+        // 检查能否连上Socket服务器
+        SocketUtil.checkSocketAvailable(getActivity(), Config.BASE_IP, Config.BASE_PORT);
+        try {
+            String uri = String.format("http://%s:%d/", Config.BASE_IP, Config.BASE_PORT);
+            mSocket = IO.socket(uri); // 创建指定地址和端口的套接字实例
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        mSocket.connect(); // 建立Socket连接
+    }
+
+    private void sendImage() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // 把位图数据压缩到字节数组输出流
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        byte[] bytes = baos.toByteArray();
+        // 每段的数据包大小
+        int mBlock = 50 * 1024;
+        int count = bytes.length/ mBlock + 1;
+        // 下面把图片数据经过BASE64编码后发给Socket服务器
+        for (int i=0; i<count; i++) {
+            String encodeData = "";
+            if (i == count-1) { // 是最后一段图像数据
+                int remain = bytes.length % mBlock;
+                byte[] temp = new byte[remain];
+                System.arraycopy(bytes, i* mBlock, temp, 0, remain);
+                encodeData = Base64.encodeToString(temp, Base64.DEFAULT);
+            } else { // 不是最后一段图像数据
+                byte[] temp = new byte[mBlock];
+                System.arraycopy(bytes, i* mBlock, temp, 0, mBlock);
+                encodeData = Base64.encodeToString(temp, Base64.DEFAULT);
+            }
+            // 往Socket服务器发送本段的图片数据
+            ImagePart part = new ImagePart(mFileName, encodeData, i, bytes.length);
+            SocketUtil.emit(mSocket, "send_image", part); // 向服务器提交图像数据
         }
     }
 }

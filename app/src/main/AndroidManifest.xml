@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!--定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-<!--    &lt;!&ndash; 访问网络获取地图服务 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.INTERNET"/>-->
-<!--    &lt;!&ndash; 检查网络可用性 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
-<!--    &lt;!&ndash; 访问WiFi状态 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
-<!--    &lt;!&ndash; 需要外部存储写权限用于保存地图缓存 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
-<!--    &lt;!&ndash; 获取device id辨别设备 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
-    <!--相机权限-->
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--网络-->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 相机权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.Uapp"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <meta-data android:name="TencentMapSDK"
-            android:value="YJNBZ-SHXRJ-2SSFI-XJXBM-LFSZH-YPBHY"/>
+
         <activity
             android:name=".GuideActivity"
             android:exported="false" />
