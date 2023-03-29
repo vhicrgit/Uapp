@@ -7,7 +7,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="E Fragment"
+        android:text="Home Module"
         android:textColor="#000"
         android:textSize="24sp"/>
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/iv_head"-->
+
 </LinearLayout>

@@ -26,14 +26,17 @@ public class GuideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
+
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         LayoutInflater inflater = LayoutInflater.from(this);
-        View guide_one = inflater.inflate(R.layout.guide_one, null);
-        View guide_two = inflater.inflate(R.layout.guide_two, null);
-        View guide_three = inflater.inflate(R.layout.guide_three, null);
-        viewsList.add(guide_one);
-        viewsList.add(guide_two);
-        viewsList.add(guide_three);
+
+        View guide_lost_and_found = inflater.inflate(R.layout.guide_lost_and_found, null);
+        View guide_learn_help = inflater.inflate(R.layout.guide_learn_help, null);
+        View guide_information_integration = inflater.inflate(R.layout.guide_information_integration, null);
+
+        viewsList.add(guide_lost_and_found);
+        viewsList.add(guide_learn_help);
+        viewsList.add(guide_information_integration);
         pagerAdapter = new PagerAdapter() {
             @Override
             public int getCount() {
@@ -60,7 +63,7 @@ public class GuideActivity extends AppCompatActivity {
             }
         };
         viewPager.setAdapter(pagerAdapter);
-        toMain = (Button) guide_three.findViewById(R.id.to_main);
+        toMain = (Button) guide_information_integration.findViewById(R.id.to_main);
         toMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

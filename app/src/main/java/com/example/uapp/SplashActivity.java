@@ -11,23 +11,17 @@ import android.view.View;
 import android.widget.Button;
 
 public class SplashActivity extends AppCompatActivity {
-
-    private static final int DELAY_TIME = 3000;  // 单位ms
-    private static final int GO_MAIN = 100;
-    private static final int GO_GUIDE = 101;
     private Button button;
     private UappTimer timer;
-
-    private boolean isFirst;
+    private boolean isFirstIn;
 
     private Handler handler = new Handler();
 
-    private Runnable runnable = new Runnable() {
+    private Runnable toNextActivity = new Runnable() {
         @Override
         public void run() {
-            if(isFirst) {
+            if(isFirstIn) {
                 startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-
             } else {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
@@ -44,30 +38,25 @@ public class SplashActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         SharedPreferences sfile = getSharedPreferences("data", MODE_PRIVATE);  // 判断用户是否第一次进入,如果是，进入引导页
-        isFirst = sfile.getBoolean("isFirst", true);
+        isFirstIn = sfile.getBoolean("isFirst", true);
         SharedPreferences.Editor editor = sfile.edit();
-        if(isFirst) {
+
+        if(isFirstIn) {
             editor.putBoolean("isFirst", false);
         }
         editor.commit();
 
         timer = new UappTimer(4000, 1000);
         timer.start();
-
-        handler.postDelayed(runnable, DELAY_TIME);
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isFirst) {
-                    startActivity(new Intent(SplashActivity.this, GuideActivity.class));
-
-                } else {
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                }
-                finish();
+                toNextActivity.run();
+                timer.onFinish();
             }
         });
+
+        handler.postDelayed(toNextActivity, 3000);
     }
 
     class UappTimer extends CountDownTimer {
@@ -77,12 +66,12 @@ public class SplashActivity extends AppCompatActivity {
         }
         @Override
         public void onTick(long l) {
-            button.setText(l/1000 + "秒");
+            button.setText(l/1000 + " s");
         }
 
         @Override
         public void onFinish() {
-            handler.removeCallbacks(runnable);
+            handler.removeCallbacks(toNextActivity);
         }
     }
 }

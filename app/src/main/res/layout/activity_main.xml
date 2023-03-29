@@ -20,8 +20,6 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="#FFF"
-        app:itemIconTint="@drawable/menu_item_selected"
-        app:itemTextColor="@drawable/menu_item_selected"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu"
         android:id="@+id/bottom_navigation"/>
