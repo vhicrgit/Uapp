@@ -17,20 +17,18 @@ public class PermissionUtil {
     // 检查多个权限。返回true表示已完全启用权限，返回false表示未完全启用权限
     public static boolean checkPermission(Activity act, String[] permissions, int requestCode) {
         boolean result = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int check = PackageManager.PERMISSION_GRANTED;
-            // 通过权限数组检查是否都开启了这些权限
-            for (String permission : permissions) {
-                check = ContextCompat.checkSelfPermission(act, permission);
-                if (check != PackageManager.PERMISSION_GRANTED) {
-                    break; // 有个权限没有开启，就跳出循环
-                }
-            }
+        int check = PackageManager.PERMISSION_GRANTED;
+        // 通过权限数组检查是否都开启了这些权限
+        for (String permission : permissions) {
+            check = ContextCompat.checkSelfPermission(act, permission);
             if (check != PackageManager.PERMISSION_GRANTED) {
-                // 未开启该权限，则请求系统弹窗，好让用户选择是否立即开启权限
-                ActivityCompat.requestPermissions(act, permissions, requestCode);
-                result = false;
+                break; // 有个权限没有开启，就跳出循环
             }
+        }
+        if (check != PackageManager.PERMISSION_GRANTED) {
+            // 未开启该权限，则请求系统弹窗，好让用户选择是否立即开启权限
+            ActivityCompat.requestPermissions(act, permissions, requestCode);
+            result = false;
         }
         return result;
     }

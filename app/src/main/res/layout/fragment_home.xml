@@ -4,13 +4,62 @@
     android:gravity="center"
     android:orientation="vertical"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Module"
-        android:textColor="#000"
-        android:textSize="24sp"/>
-<!--    <com.google.android.material.imageview.ShapeableImageView-->
-<!--        android:id="@+id/iv_head"-->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/show_photo"
+            android:layout_width="400px"
+            android:layout_height="600px"
+            android:layout_weight="2"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/bg" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/take_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:layout_weight="1"
+                android:background="#EEE"
+                android:padding="10dp"
+                android:text="Take"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/upload_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:layout_weight="1"
+                android:background="#EEE"
+                android:padding="10dp"
+                android:text="Upload"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+
+        <TextView
+            android:id="@+id/show_location"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="当前位置信息" />
+    </LinearLayout>
 </LinearLayout>

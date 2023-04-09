@@ -12,11 +12,6 @@
         tools:layout="@layout/fragment_home">
     </fragment>
     <fragment
-        android:id="@+id/find_fragment"
-        android:name="com.example.uapp.FindFragment"
-        android:label="find_fragment"
-        tools:layout="@layout/fragment_find"/>
-    <fragment
         android:id="@+id/msg_fragment"
         android:name="com.example.uapp.MsgFragment"
         android:label="msg_fragment"

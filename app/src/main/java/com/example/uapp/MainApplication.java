@@ -1,9 +1,6 @@
 package com.example.uapp;
 
-import android.app.Activity;
 import android.app.Application;
-
-import java.util.List;
 
 public class MainApplication extends Application {
     private static MainApplication mApp; // 声明一个当前应用的静态实例

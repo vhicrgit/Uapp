@@ -1,5 +1,6 @@
 package com.example.uapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -15,7 +16,6 @@ import com.google.android.material.navigation.NavigationBarView;
 
 
 public class MainActivity extends AppCompatActivity {
-    private BottomNavigationView bottomNavigation;
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
     @Override
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initPermissionCheckAndRequest();
-        bottomNavigation = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         // 获取navController
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         // 通过setupWithController将底部导航和导航控制器进行绑定
@@ -37,9 +37,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // requestCode不能为负数，也不能大于2的16次方即65536
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "需要允许定位权限才能开始定位", Toast.LENGTH_SHORT).show();
