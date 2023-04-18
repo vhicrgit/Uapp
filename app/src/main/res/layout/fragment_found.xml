@@ -7,7 +7,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Message cc"
-        android:textColor="#000"
+        android:text="@string/found"
+        android:textColor="#00F"
         android:textSize="24sp"/>
+
 </LinearLayout>

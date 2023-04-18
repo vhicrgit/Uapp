@@ -1,4 +1,4 @@
-package com.example.uapp.util;
+package com.example.uapp.task.util;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

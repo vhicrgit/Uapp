@@ -29,8 +29,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.uapp.config.Config;
 import com.example.uapp.task.GetAddressTask;
-import com.example.uapp.util.DateUtil;
-import com.example.uapp.util.SocketUtil;
+import com.example.uapp.task.util.DateUtil;
+import com.example.uapp.task.util.SocketUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;

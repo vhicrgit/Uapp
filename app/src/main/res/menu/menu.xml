@@ -7,7 +7,11 @@
     <item
         android:id="@+id/msg_fragment"
         android:icon="@drawable/ic_msg"
-        android:title="消息"/>
+        android:title="寻物启事"/>
+    <item
+        android:id="@+id/found_fragment"
+        android:icon="@drawable/ic_msg"
+        android:title="失物招领"/>
     <item
         android:id="@+id/mine_fragment"
         android:icon="@drawable/ic_mine"

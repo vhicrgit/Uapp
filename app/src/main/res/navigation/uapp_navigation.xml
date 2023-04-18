@@ -17,6 +17,11 @@
         android:label="msg_fragment"
         tools:layout="@layout/fragment_msg"/>
     <fragment
+        android:id="@+id/found_fragment"
+        android:name="com.example.uapp.FoundFragment"
+        android:label="found_fragment"
+        tools:layout="@layout/fragment_found"/>
+    <fragment
         android:id="@+id/mine_fragment"
         android:name="com.example.uapp.MineFragment"
         android:label="mine_fragment"
