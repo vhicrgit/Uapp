@@ -115,10 +115,8 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this,"新用户注册成功！",
                         Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
-                intent.putExtra("data1",username);
-                Log.d("MyApp", "RegisterActivity:username:"+username);
+                intent.putExtra("data1",sno);
                 intent.putExtra("data2",passward);
-                Log.d("MyApp", "RegisterActivity:passward:"+passward);
                 setResult(RESULT_OK,intent);
                 finish();
             }

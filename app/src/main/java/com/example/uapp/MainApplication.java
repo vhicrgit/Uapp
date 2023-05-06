@@ -2,6 +2,8 @@ package com.example.uapp;
 
 import android.app.Application;
 
+import org.litepal.LitePal;
+
 public class MainApplication extends Application {
     private static MainApplication mApp; // 声明一个当前应用的静态实例
 
@@ -13,6 +15,8 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+//        LitePal.initialize(this, 7);
+        LitePal.getDatabase().execSQL("ALTER TABLE LostItem ADD COLUMN image BLOB");
         mApp = this; // 在打开应用时对静态的应用实例赋值
     }
 }

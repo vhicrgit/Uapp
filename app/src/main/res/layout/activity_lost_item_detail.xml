@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="物品名："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="xxx"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="丢失时间："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/lost_time"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="xxx"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="丢失地点："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/lost_pos"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="xxx"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="联系方式："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/contact"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="xxx"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="描述："
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="xxx"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+
+</LinearLayout>

@@ -46,6 +46,18 @@
                 android:padding="10dp"
                 android:text="Upload"
                 android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_post_lost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:layout_weight="1"
+                android:background="#EEE"
+                android:padding="10dp"
+                android:text="UploadLost"
+                android:textAllCaps="false" />
+
         </LinearLayout>
     </LinearLayout>
 

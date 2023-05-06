@@ -94,6 +94,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         Button buttonTakePhoto = view.findViewById(R.id.take_photo);
         Button buttonUploadPhoto = view.findViewById(R.id.upload_photo);
+        Button btn_post_lost = view.findViewById(R.id.btn_post_lost);
         imageShow = view.findViewById(R.id.show_photo);
         textLocation = view.findViewById(R.id.show_location);
 
@@ -114,6 +115,14 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 mBitmap =  ((BitmapDrawable)imageShow.getDrawable()).getBitmap();
                 sendImage();
+            }
+        });
+
+        btn_post_lost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PostLostActivity.class);
+                startActivity(intent);
             }
         });
 

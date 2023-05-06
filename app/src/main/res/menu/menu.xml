@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/home_fragment"
         android:icon="@drawable/ic_home"
         android:title="首页"/>
     <item
-        android:id="@+id/msg_fragment"
+        android:id="@+id/lost_fragment"
         android:icon="@drawable/ic_msg"
         android:title="寻物启事"/>
     <item

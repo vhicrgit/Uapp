@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home">
     </fragment>
     <fragment
-        android:id="@+id/msg_fragment"
-        android:name="com.example.uapp.MsgFragment"
-        android:label="msg_fragment"
-        tools:layout="@layout/fragment_msg"/>
+        android:id="@+id/lost_fragment"
+        android:name="com.example.uapp.LostFragment"
+        android:label="lost_fragment"
+        tools:layout="@layout/fragment_lost"/>
     <fragment
         android:id="@+id/found_fragment"
         android:name="com.example.uapp.FoundFragment"

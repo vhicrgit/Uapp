@@ -4,4 +4,10 @@
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/purple_200</item>
     </style>
+
+    <!-- 圆形图片 -->
+    <style name="circleImageStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
