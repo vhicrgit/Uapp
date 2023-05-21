@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.uapp.config.Config;
@@ -95,12 +97,18 @@ public class HomeFragment extends Fragment {
         Button buttonTakePhoto = view.findViewById(R.id.take_photo);
         Button buttonUploadPhoto = view.findViewById(R.id.upload_photo);
         Button btn_post_lost = view.findViewById(R.id.btn_post_lost);
+        Button btn_post_found = view.findViewById(R.id.btn_post_found);
         imageShow = view.findViewById(R.id.show_photo);
         textLocation = view.findViewById(R.id.show_location);
 
         providerMap.put("gps", "卫星定位");
         providerMap.put("network", "网络定位");
 
+        //导航栏及菜单
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setTitle("主页");
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
 
         buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +130,14 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), PostLostActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_post_found.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PostFoundActivity.class);
                 startActivity(intent);
             }
         });

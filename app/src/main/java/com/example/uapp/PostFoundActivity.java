@@ -1,17 +1,25 @@
 package com.example.uapp;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +31,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
+import com.example.uapp.task.GetAddressTask;
+import com.example.uapp.task.util.DateUtil;
+import com.example.uapp.task.util.SocketUtil;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
@@ -45,6 +57,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,11 +68,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
-public class PostLostActivity extends AppCompatActivity {
+public class PostFoundActivity extends AppCompatActivity {
     //*********** item数据相关 ************
     private String itemName;
     private int imageId;
@@ -95,8 +113,21 @@ public class PostLostActivity extends AppCompatActivity {
     //******************* 控件 *******************
     private Button btn_img;
     private ImageView iv_img;
-    //******************* 控件 *******************
+    private EditText et_pos;
+    //******************* 标识 *******************
+    private Boolean imageExist = false;
     private UappService.Client UappServiceClient;
+
+    private final Map<String, String> providerMap = new HashMap<>();
+
+    private String mLocationDesc = ""; // 定位说明
+    private LocationManager mLocationMgr; // 声明一个定位管理器对象
+    private final Criteria criteria = new Criteria(); // 创建一个定位准则对象
+    private final Handler mHandler = new Handler(Looper.myLooper()); // 声明一个处理器对象
+    private boolean isLocationEnable = false; // 定位服务是否可用
+
+    private Socket mSocket; // 声明一个套接字对象
+
     private void initializeUappServiceClient() throws TException {
         // 创建TTransport对象
         TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
@@ -114,12 +145,41 @@ public class PostLostActivity extends AppCompatActivity {
         }
     }
 
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            showLocation(location); // 显示定位结果文本
+        }
+
+        @Override
+        public void onProviderDisabled(String arg0) {
+        }
+
+        @Override
+        public void onProviderEnabled(String arg0) {
+        }
+
+        @Override
+        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+        }
+    };
+
+    private final Runnable mRefresh = new Runnable() {
+        @Override
+        public void run() {
+            if (!isLocationEnable) {
+                initLocation(); // 初始化定位服务
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_lost);
+        setContentView(R.layout.activity_post_found);
         LitePal.getDatabase();
         EditText et_item_name = findViewById(R.id.et_type);
-        EditText et_pos = findViewById(R.id.et_pos);
+        et_pos = findViewById(R.id.et_pos);
         EditText et_desc = findViewById(R.id.et_desc);
         Button btn_post = findViewById(R.id.btn_post);
         EditText et_lost_time = findViewById(R.id.et_lost_time);
@@ -130,10 +190,21 @@ public class PostLostActivity extends AppCompatActivity {
 
         //导航栏及菜单
         Toolbar toolbar = findViewById(R.id.toolbar_1);
-        toolbar.setTitle("丢失物品上传");
+        toolbar.setTitle("捡到失物上传");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //自动设置时间
+        java.util.Date currentDate = new java.util.Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(currentDate);
+        et_lost_time.setText(formattedDate);
+
+        //自动设置地点
+        //TODO
+
+        providerMap.put("gps", "卫星定位");
+        providerMap.put("network", "网络定位");
 
         btn_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,33 +218,36 @@ public class PostLostActivity extends AppCompatActivity {
         btn_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!imageExist) {
+                    showMsg("请先上传一张图片！");
+                }
                 LitePal.getDatabase();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     //获取输入框中的日期、丢失物品名、地点
                     //用户名
-                    SharedPreferences pref = getSharedPreferences("login_info",MODE_PRIVATE);
-                    posterId = pref.getString("sno","匿名");
+                    SharedPreferences pref = getSharedPreferences("login_info", MODE_PRIVATE);
+                    posterId = pref.getString("sno", "匿名");
                     //物品名
-                    if(TextUtils.isEmpty(et_item_name.getText().toString())){
-                        Toast.makeText(PostLostActivity.this,"丢失物品名不能为空！",
+                    if (TextUtils.isEmpty(et_item_name.getText().toString())) {
+                        Toast.makeText(PostFoundActivity.this, "丢失物品名不能为空！",
                                 Toast.LENGTH_SHORT).show();
                         return;
-                    } else{
+                    } else {
                         itemName = et_item_name.getText().toString();
                     }
                     //地点
-                    if(TextUtils.isEmpty(et_pos.getText().toString())){
-                        Toast.makeText(PostLostActivity.this,"丢失地点不能为空！",
+                    if (TextUtils.isEmpty(et_pos.getText().toString())) {
+                        Toast.makeText(PostFoundActivity.this, "丢失地点不能为空！",
                                 Toast.LENGTH_SHORT).show();
                         return;
-                    } else{
+                    } else {
                         pos = et_pos.getText().toString();
                     }
                     //时间
-                    if(TextUtils.isEmpty(et_lost_time.getText().toString())){//若未选择丢失时间，默认当天
+                    if (TextUtils.isEmpty(et_lost_time.getText().toString())) {//若未选择丢失时间，默认当天
                         lostTime = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-                    } else{
+                    } else {
                         try {
                             lostTime = dateFormat.parse(et_lost_time.getText().toString());
                         } catch (ParseException e) {
@@ -181,9 +255,9 @@ public class PostLostActivity extends AppCompatActivity {
                         }
                     }
                     //描述
-                    if(TextUtils.isEmpty(et_desc.getText().toString())){
+                    if (TextUtils.isEmpty(et_desc.getText().toString())) {
                         desc = "";
-                    }else {
+                    } else {
                         desc = et_desc.getText().toString();
                     }
                     //上传时间
@@ -205,7 +279,7 @@ public class PostLostActivity extends AppCompatActivity {
 
                     Log.d("MyApp", imgPath);
 
-                    new PostLostActivity.PostLostTask().execute();
+                    new PostFoundActivity.PostFoundTask().execute();
                 }
 
             }
@@ -220,15 +294,15 @@ public class PostLostActivity extends AppCompatActivity {
                 int month = calendar.get(Calendar.MONTH);
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                 // 创建DatePickerDialog实例
-                DatePickerDialog datePickerDialog = new DatePickerDialog(PostLostActivity.this,
-                    new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            // 处理用户选择的日期
-                            String date = year + "-" + (month + 1) + "-" + dayOfMonth;
-                            et_lost_time.setText(date);
-                        }
-                    }, year, month, dayOfMonth);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(PostFoundActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                // 处理用户选择的日期
+                                String date = year + "-" + (month + 1) + "-" + dayOfMonth;
+                                et_lost_time.setText(date);
+                            }
+                        }, year, month, dayOfMonth);
                 // 显示DatePickerDialog
                 datePickerDialog.show();
             }
@@ -236,7 +310,7 @@ public class PostLostActivity extends AppCompatActivity {
     }
 
     // ************* 与服务器交互的新线程 *************
-    private class PostLostTask extends AsyncTask<Void, Void, Boolean> {
+    private class PostFoundTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -248,7 +322,7 @@ public class PostLostActivity extends AppCompatActivity {
                         "yyyy_MM_dd_HH_mm_ss_");
                 PostInfo lostItemInfo = new PostInfo();
                 lostItemInfo.setItem_type(itemName);
-                lostItemInfo.setFor_lost_item(true);
+                lostItemInfo.setFor_lost_item(false);
                 lostItemInfo.setStudent_id(posterId);
                 lostItemInfo.setItem_position(pos);
                 lostItemInfo.setItem_desc(desc);
@@ -256,7 +330,7 @@ public class PostLostActivity extends AppCompatActivity {
                 lostItemInfo.setStatus(state);
                 lostItemInfo.setLost_time(lostTime.getTime());
                 lostItemInfo.setImage_name(imgName);
-                lostItemInfo.setPost_id(timeStampFormat.format(postTime)+posterId);
+                lostItemInfo.setPost_id(timeStampFormat.format(postTime) + posterId);
 
                 Log.d("=== itemName ===", itemName);
                 Log.d("=== posterId ===", posterId);
@@ -288,26 +362,24 @@ public class PostLostActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result){
-            if(result){
-                Toast.makeText(PostLostActivity.this,"上传成功！",
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                Toast.makeText(PostFoundActivity.this, "上传成功！",
                         Toast.LENGTH_SHORT).show();
                 finish();
-            }
-            else{
-                Toast.makeText(PostLostActivity.this,"上传失败",
+            } else {
+                Toast.makeText(PostFoundActivity.this, "上传失败",
                         Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
-
-
     //************** 辅助函数 ***************
     private void showMsg(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
     /**
      * 检查版本
      */
@@ -341,8 +413,8 @@ public class PostLostActivity extends AppCompatActivity {
             checkVersion();
             return;
         }
-        SharedPreferences pref = getSharedPreferences("login_info",MODE_PRIVATE);
-        posterId = pref.getString("sno","null");
+        SharedPreferences pref = getSharedPreferences("login_info", MODE_PRIVATE);
+        posterId = pref.getString("sno", "null");
         SimpleDateFormat timeStampFormat = new SimpleDateFormat(
                 "yyyy_MM_dd_HH_mm_ss_");
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -413,11 +485,11 @@ public class PostLostActivity extends AppCompatActivity {
                         ByteArrayOutputStream mid = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, mid);
                         int size = mid.toByteArray().length / (1024 * 1024);
-                        if(size > 10){//压缩到512kb以内
+                        if (size > 10) {//压缩到512kb以内
                             showMsg("图片过大");
-                        }else if(size > 5){//压缩到512kb以内
+                        } else if (size > 5) {//压缩到512kb以内
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
-                        }else {
+                        } else {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStream);
                         }
 //                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
@@ -434,6 +506,8 @@ public class PostLostActivity extends AppCompatActivity {
                     }
                     //显示图片
                     displayImage(imgPath);
+                    //设置标识，用户已选择图片
+                    imageExist = true;
                     //存储缩略图
                     saveThumbnail();
                 }
@@ -452,6 +526,8 @@ public class PostLostActivity extends AppCompatActivity {
                     saveSelectedImage(imgPath);
                     //显示图片
                     displayImage(imgPath);
+                    //设置标识，用户已选择图片
+                    imageExist = true;
                     //存储缩略图
                     saveThumbnail();
                 }
@@ -460,6 +536,7 @@ public class PostLostActivity extends AppCompatActivity {
                 break;
         }
     }
+
     public void changeAvatar(View view) {
         bottomSheetDialog = new BottomSheetDialog(this);
         bottomView = getLayoutInflater().inflate(R.layout.dialog_bottom, null);
@@ -489,8 +566,8 @@ public class PostLostActivity extends AppCompatActivity {
 
     public void saveSelectedImage(String imageUrl) {
         File file = new File(imageUrl);
-        SharedPreferences pref = getSharedPreferences("login_info",MODE_PRIVATE);
-        posterId = pref.getString("sno","null");
+        SharedPreferences pref = getSharedPreferences("login_info", MODE_PRIVATE);
+        posterId = pref.getString("sno", "null");
         SimpleDateFormat timeStampFormat = new SimpleDateFormat(
                 "yyyy_MM_dd_HH_mm_ss_");
         String filename = timeStampFormat.format(new java.util.Date());
@@ -510,12 +587,12 @@ public class PostLostActivity extends AppCompatActivity {
             ByteArrayOutputStream mid = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, mid);
             float size = mid.toByteArray().length / (1024 * 1024);
-            int quality = (int)(100/size);
-            if(size > 10){
+            int quality = (int) (100 / size);
+            if (size > 10) {
                 showMsg("图片过大");
-            }else if(size > 5){
+            } else if (size > 5) {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream);
-            }else {
+            } else {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
             }
             outputStream.close();
@@ -532,7 +609,7 @@ public class PostLostActivity extends AppCompatActivity {
         }
     }
 
-    private void saveThumbnail(){
+    private void saveThumbnail() {
         // 原始图片路径
         String imagePath = imgPath;
 
@@ -575,5 +652,105 @@ public class PostLostActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHandler.removeCallbacks(mRefresh); // 移除定位刷新任务
+        initLocation(); // 初始化定位服务
+        mHandler.postDelayed(mRefresh, 100); // 延迟100毫秒启动定位刷新任务
+        // 初始化套接字
+        initSocket();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initLocation() {
+        // 从系统服务中获取定位管理器
+        mLocationMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE); // 设置定位精确度
+        criteria.setAltitudeRequired(true); // 设置是否需要海拔信息
+        criteria.setBearingRequired(true); // 设置是否需要方位信息
+        criteria.setCostAllowed(true); // 设置是否允许运营商收费
+        criteria.setPowerRequirement(Criteria.POWER_LOW); // 设置对电源的需求
+        // 获取定位管理器的最佳定位提供者
+        String bestProvider = mLocationMgr.getBestProvider(criteria, true);
+
+        if (bestProvider != null && mLocationMgr.isProviderEnabled(bestProvider)) { // 定位提供者当前可用
+            et_pos.setText("正在获取" + providerMap.get(bestProvider) + "对象");
+            mLocationDesc = String.format("定位类型为%s", providerMap.get(bestProvider));
+            beginLocation(bestProvider); // 开始定位
+            isLocationEnable = true;
+        } else { // 定位提供者暂不可用
+            et_pos.setText(providerMap.get(bestProvider) + "不可用");
+            isLocationEnable = false;
+        }
+    }
+
+    private void beginLocation(String method) {
+        // 设置定位管理器的位置变更监听器
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLocationMgr.requestLocationUpdates(method, 300, 0, mLocationListener);
+        // 获取最后一次成功定位的位置信息
+        Location location = mLocationMgr.getLastKnownLocation(method);
+        showLocation(location); // 显示定位结果文本
+    }
+
+    // 设置定位结果文本
+    @SuppressLint("SetTextI18n")
+    private void showLocation(Location location) {
+        if (location != null) {
+            // 创建一个根据经纬度查询详细地址的任务
+//            GetAddressTask task = new GetAddressTask(getActivity(), location, address -> {
+//                @SuppressLint("DefaultLocale") String desc = String.format("%s\n定位信息如下： " +
+//                                "\n\t定位时间为%s，" + "\n\t经度为%f，纬度为%f，" +
+//                                "\n\t高度为%d米，精度为%d米，" +
+//                                "\n\t详细地址为%s。",
+//                        mLocationDesc, DateUtil.formatDate(location.getTime()),
+//                        location.getLongitude(), location.getLatitude(),
+//                        Math.round(location.getAltitude()), Math.round(location.getAccuracy()),
+//                        address);
+//                textLocation.setText(desc);
+//            });
+            GetAddressTask task = new GetAddressTask(this, location, address -> {
+                @SuppressLint("DefaultLocale") String desc = String.format(
+                        "定位时间为%s，" +
+                                "\n\t详细地址为%s。",
+                        DateUtil.formatDate(location.getTime()),
+                        address);
+                et_pos.setText(desc);
+            });
+            task.start(); // 启动地址查询任务
+        } else {
+            et_pos.setText(mLocationDesc + "\n暂未获取到定位对象");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mLocationMgr.removeUpdates(mLocationListener); // 移除定位管理器的位置变更监听器
+    }
+
+    // 初始化套接字
+    private void initSocket() {
+        // 检查能否连上Socket服务器
+        SocketUtil.checkSocketAvailable(this, Config.BASE_IP, Config.BASE_PORT);
+        try {
+            @SuppressLint("DefaultLocale") String uri = String.format("http://%s:%d/", Config.BASE_IP, Config.BASE_PORT);
+            mSocket = IO.socket(uri); // 创建指定地址和端口的套接字实例
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        mSocket.connect(); // 建立Socket连接
     }
 }

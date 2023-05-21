@@ -15,6 +15,7 @@ import com.example.uapp.R;
 
 import com.example.uapp.R;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class LostItemAdapter extends ArrayAdapter<LostItem> {
@@ -53,11 +54,12 @@ public class LostItemAdapter extends ArrayAdapter<LostItem> {
         TextView lostTime = (TextView) view.findViewById(R.id.lostTime);
         TextView pos = (TextView) view.findViewById(R.id.pos);
 //        itemImage.setImageResource(lostItem.getImageId());
-        Bitmap bitmap = BitmapFactory.decodeFile(lostItem.getImagePath());
+        Bitmap bitmap = BitmapFactory.decodeFile(lostItem.getThumbnailPath());
         itemImage.setImageBitmap(bitmap);
-        
         itemName.setText(lostItem.getName());
-        lostTime.setText(lostItem.getLostTime().toString());
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月dd日");
+        String formattedDate1 = dateFormat1.format(lostItem.getLostTime());
+        lostTime.setText(formattedDate1);
         pos.setText(lostItem.getPos());
         return view;
     }

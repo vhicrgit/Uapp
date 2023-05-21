@@ -3,6 +3,8 @@ package com.example.uapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,11 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +37,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoginActivity extends AppCompatActivity {
     private String sno;
     private String username = "";
+    private String contact = "";
     private String passward;
     private String email = "";
     private boolean loggedIn;
@@ -82,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initializeUappServiceClient() throws TException {
         // 创建TTransport对象
-        TTransport transport = new TSocket("202.38.72.73", 7860);
+        TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
         // 创建TProtocol对象
         TProtocol protocol = new TBinaryProtocol(transport);
         // 创建ItemService.Client对象
@@ -108,6 +116,31 @@ public class LoginActivity extends AppCompatActivity {
                     userInfo = UappServiceClient.getUserInfo(sno);
                     email = userInfo.getEmail();
                     username = userInfo.getUsername();
+                    contact = userInfo.getContact();
+
+                    if(userInfo.getHeadshot() != null && userInfo.getHeadshot().length != 0){
+                        Log.d("=======debug_head_shot=======", " "+ Arrays.toString(userInfo.getHeadshot()));
+                        Log.d("=======debug_head_shot=======", "len: "+ userInfo.getHeadshot().length);
+
+                        File file = new File(getFilesDir(),"headshot.jpg");
+                        if (!file.exists()) {
+                            try {
+                                byte [] image = userInfo.getHeadshot();
+                                if(Arrays.toString(image).equals("null")){
+                                    return false;
+                                }
+                                // 将 byte[] 数据转换为 Bitmap
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                                // 将 Bitmap 保存为文件
+                                FileOutputStream outputStream = new FileOutputStream(file);
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                outputStream.flush();
+                                outputStream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
                 return logInSuccess;
             } catch (TException e) {
@@ -130,6 +163,8 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("email",email);
                 editor.putBoolean("loggedIn",loggedIn);
                 editor.apply();
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
             else{
@@ -138,4 +173,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }

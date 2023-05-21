@@ -3,7 +3,6 @@ package com.example.uapp;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uapp.thr.DetailInfo;
-import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.ReqInfo;
 import com.example.uapp.thr.UappService;
 
@@ -21,14 +19,10 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,7 +30,7 @@ import java.util.Date;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class LostItemDetailActivity extends AppCompatActivity {
+public class FoundItemDetailActivity extends AppCompatActivity {
     TextView itemName;
     TextView lostTime;
     TextView lostPos;
@@ -69,7 +63,7 @@ public class LostItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lost_item_detail);
+        setContentView(R.layout.activity_found_item_detail);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,7 +107,7 @@ public class LostItemDetailActivity extends AppCompatActivity {
                 DetailInfo detailInfo;
                 ReqInfo reqInfo = new ReqInfo();
                 initializeUappServiceClient();
-                reqInfo.setFor_lost_item(true);
+                reqInfo.setFor_lost_item(false);
                 reqInfo.setPost_id(post_id);
                 detailInfo = UappServiceClient.reqDetail(reqInfo);
 
@@ -153,7 +147,7 @@ public class LostItemDetailActivity extends AppCompatActivity {
                 imageView.setImageBitmap(BitmapFactory.decodeFile(image_path));
             }
             else{
-                Toast.makeText(LostItemDetailActivity.this,"获取图片失败",
+                Toast.makeText(FoundItemDetailActivity.this,"获取图片失败",
                         Toast.LENGTH_SHORT).show();
             }
         }

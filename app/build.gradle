@@ -26,6 +26,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
@@ -66,4 +67,11 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0'
     //下拉刷新
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    //
+    implementation 'com.facebook.fresco:fresco:2.5.0'
+    //
+    implementation 'com.github.lygttpod:SuperTextView:2.1.6'
+    //图片下拉放大
+    implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1' // last SupportLib version
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }

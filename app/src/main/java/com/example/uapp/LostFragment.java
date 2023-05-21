@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.uapp.item.LostItem;
 import com.example.uapp.item.LostItemAdapter;
+import com.example.uapp.thr.AbbrInfo;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.UappService;
 
@@ -62,11 +63,15 @@ public class LostFragment extends Fragment {
     private String firstPostId = "";
     private String lastPostId = "";
     private Boolean onSearch = false;//表示当前是否在搜索中
+    private long debug_lost_time;
+    private long debug_post_time;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private UappService.Client UappServiceClient;
     private void initializeUappServiceClient() throws TException {
         // 创建TTransport对象
-        TTransport transport = new TSocket("202.38.72.73", 7860);
+        TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
         // 创建TProtocol对象
         TProtocol protocol = new TBinaryProtocol(transport);
         // 创建ItemService.Client对象
@@ -84,7 +89,6 @@ public class LostFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lost, container, false);
-
         //导航栏及菜单
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -102,6 +106,8 @@ public class LostFragment extends Fragment {
                     public boolean onQueryTextSubmit(String query) {
                         // 提交文本事件
                         searchText = query;
+                        onSearch = true;
+                        lostItemList.clear();
                         new searchTask().execute();
                         return true;
                     }
@@ -125,13 +131,13 @@ public class LostFragment extends Fragment {
 
 
         // 设置下拉刷新的监听器
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 lostItemList.clear();
                 new LostFragment.getPostTask().execute();
-                swipeRefreshLayout.setRefreshing(false);
+//                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -153,11 +159,12 @@ public class LostFragment extends Fragment {
                 // 添加要传递的数据
                 LostItem lostItem = lostItemList.get(position);
                 intent.putExtra("itemName", lostItem.getName());
-                intent.putExtra("lostTime", lostItem.getLostTime());
+                intent.putExtra("postId",lostItem.getPostId());
+                intent.putExtra("lostTime", lostItem.getLostTime().getTime());
                 intent.putExtra("lostPos", lostItem.getPos());
                 intent.putExtra("contact", lostItem.getPosterId());
                 intent.putExtra("description", lostItem.getDesc());
-                intent.putExtra("image",lostItem.getImagePath());
+                intent.putExtra("imagePath", lostItem.getImagePath());
                 // 启动活动
                 startActivity(intent);
             }
@@ -212,14 +219,21 @@ public class LostFragment extends Fragment {
             // 创建Item对象
             try {
                 initializeUappServiceClient();
-                List<PostInfo> PostInfos = UappServiceClient.getPostBy10();
-                for(PostInfo postInfo:PostInfos){
+                List<AbbrInfo> AbbrInfos = UappServiceClient.getPostBy10(true);
+                for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
-                    String imageName = postInfo.getImage_name();
+                    String imageName = abbrInfo.getImage_name();
+                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    // 去掉文件后缀
+                    int dotIndex = imageName.lastIndexOf(".");
+                    if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
+                        imageName = imageName.substring(0, dotIndex);
+                    }
+                    imageName = imageName + "_thumbnail.jpg";
                     File file = new File(getContext().getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
-                            byte [] image = postInfo.getItem_image();
+                            byte [] image = abbrInfo.getThumbnail();
                             // 将 byte[] 数据转换为 Bitmap
                             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                             // 将 Bitmap 保存为文件
@@ -231,14 +245,19 @@ public class LostFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    LostItem lostItem = new LostItem(postInfo.getItem_type(),
-                            file.getPath(),
-                            new Date(postInfo.lost_time),
-                            postInfo.getItem_position(),
-                            postInfo.getStudent_id(),
-                            new Date(postInfo.getDate()),
-                            postInfo.isStatus(),
-                            postInfo.getPost_id());
+                    Date lost_time = new Date(abbrInfo.getLost_time());
+                    Date post_time = new Date(abbrInfo.getDate());
+                    debug_lost_time = abbrInfo.getLost_time();
+                    debug_post_time = abbrInfo.getDate();
+                    LostItem lostItem = new LostItem(abbrInfo.getItem_type(),
+                            file_full.getPath(),
+                            lost_time,
+                            abbrInfo.getItem_position(),
+                            abbrInfo.getStudent_id(),
+                            post_time,
+                            abbrInfo.isStatus(),
+                            abbrInfo.getPost_id(),
+                            abbrInfo.getItem_desc());
                     lostItemList.add(lostItem);
                 }
 
@@ -259,7 +278,7 @@ public class LostFragment extends Fragment {
                 listview.setAdapter(adapter);
                 //获取首尾帖子id
                 if (lostItemList == null || lostItemList.isEmpty()) {
-                    // List<PostInfo> PostInfos 为空
+                    // List<AbbrInfo> AbbrInfos 为空
                     firstPostId = "";
                     lastPostId = "";
                 }else {
@@ -268,11 +287,14 @@ public class LostFragment extends Fragment {
                 }
                 Toast.makeText(getActivity(),"刷新成功！",
                         Toast.LENGTH_SHORT).show();
+                Log.d("========== debug_lost_time ==========", Long.toString(debug_lost_time));
+                Log.d("========== debug_post_time ==========", Long.toString(debug_post_time));
             }
             else{
                 Toast.makeText(getActivity(),"刷新失败",
                         Toast.LENGTH_SHORT).show();
             }
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -283,14 +305,22 @@ public class LostFragment extends Fragment {
             // 创建Item对象
             try {
                 initializeUappServiceClient();
-                List<PostInfo> PostInfos = UappServiceClient.searchNext10(searchText,"",true,true);
-                for(PostInfo postInfo:PostInfos){
+                List<AbbrInfo> AbbrInfos = UappServiceClient.searchNext10(searchText,"",true,true);
+                Log.d("=======debug_AbbrInfos=======", " "+AbbrInfos.size());
+                for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
-                    String imageName = postInfo.getImage_name();
+                    String imageName = abbrInfo.getImage_name();
+                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    // 去掉文件后缀
+                    int dotIndex = imageName.lastIndexOf(".");
+                    if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
+                        imageName = imageName.substring(0, dotIndex);
+                    }
+                    imageName = imageName + "_thumbnail.jpg";
                     File file = new File(getContext().getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
-                            byte [] image = postInfo.getItem_image();
+                            byte [] image = abbrInfo.getThumbnail();
                             // 将 byte[] 数据转换为 Bitmap
                             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                             // 将 Bitmap 保存为文件
@@ -302,15 +332,22 @@ public class LostFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    LostItem lostItem = new LostItem(postInfo.getItem_type(),
-                            file.getPath(),
-                            new Date(postInfo.lost_time),
-                            postInfo.getItem_position(),
-                            postInfo.getStudent_id(),
-                            new Date(postInfo.getDate()),
-                            postInfo.isStatus(),
-                            postInfo.getPost_id());
+                    Date lost_time = new Date(abbrInfo.getLost_time());
+                    Date post_time = new Date(abbrInfo.getDate());
+                    debug_lost_time = abbrInfo.getLost_time();
+                    debug_post_time = abbrInfo.getDate();
+                    LostItem lostItem = new LostItem(abbrInfo.getItem_type(),
+                            file_full.getPath(),
+                            lost_time,
+                            abbrInfo.getItem_position(),
+                            abbrInfo.getStudent_id(),
+                            post_time,
+                            abbrInfo.isStatus(),
+                            abbrInfo.getPost_id(),
+                            abbrInfo.getItem_desc());
                     lostItemList.add(lostItem);
+                    Log.d("=======debug_add(lostItem)=======", " "+file_full.getPath());
+                    Log.d("=======debug_add(lostItem)=======", " "+abbrInfo.getItem_type());
                 }
 
             } catch (TException e) {
@@ -328,9 +365,14 @@ public class LostFragment extends Fragment {
                         R.layout.lost_item,lostItemList);
                 ListView listview = getView().findViewById(R.id.listview);
                 listview.setAdapter(adapter);
-                //获取首尾帖子id
-                firstPostId = lostItemList.get(0).getPostId();
-                lastPostId = lostItemList.get(lostItemList.size() - 1).getPostId();
+                if (lostItemList == null || lostItemList.isEmpty()) {
+                    // List<AbbrInfo> AbbrInfos 为空
+                    firstPostId = "";
+                    lastPostId = "";
+                }else {
+                    firstPostId = lostItemList.get(0).getPostId();
+                    lastPostId = lostItemList.get(lostItemList.size() - 1).getPostId();
+                }
                 //设置搜索状态
                 onSearch = true;
                 Toast.makeText(getActivity(),"搜索成功！",
@@ -351,29 +393,35 @@ public class LostFragment extends Fragment {
             try {
                 Boolean isNext = booleans[0];
                 initializeUappServiceClient();
-                List<PostInfo> PostInfos;
+                List<AbbrInfo> AbbrInfos;
                 if(isNext){//NextPage
-                    PostInfos = UappServiceClient.searchNext10(searchText,lastPostId,onSearch, true);
+                    AbbrInfos = UappServiceClient.searchNext10(searchText,lastPostId,onSearch, true);
                 }
                 else{//PrevPage
-                    PostInfos = UappServiceClient.searchPrev10(searchText,firstPostId,onSearch,true);
+                    AbbrInfos = UappServiceClient.searchPrev10(searchText,firstPostId,onSearch,true);
                 }
-                if (PostInfos == null || PostInfos.isEmpty()) {
-                    // List<PostInfo> PostInfos 为空
-                    if(isNext){
-                        Toast.makeText(getActivity(),"当前为最后一页！",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getActivity(),"当前为第一页！",Toast.LENGTH_SHORT).show();
-                    }
+                Log.d("=======debug_AbbrInfos=======", " "+AbbrInfos.size());
+                if (AbbrInfos == null || AbbrInfos.isEmpty()) {
+                    // List<AbbrInfo> AbbrInfos 为空
+//                    firstPostId = "";
+//                    lastPostId = "";
                     return false;
                 }
-                for(PostInfo postInfo:PostInfos){
+                lostItemList.clear();
+                for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
-                    String imageName = postInfo.getImage_name();
+                    String imageName = abbrInfo.getImage_name();
+                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    // 去掉文件后缀
+                    int dotIndex = imageName.lastIndexOf(".");
+                    if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
+                        imageName = imageName.substring(0, dotIndex);
+                    }
+                    imageName = imageName + "_thumbnail.jpg";
                     File file = new File(getContext().getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
-                            byte [] image = postInfo.getItem_image();
+                            byte [] image = abbrInfo.getThumbnail();
                             // 将 byte[] 数据转换为 Bitmap
                             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                             // 将 Bitmap 保存为文件
@@ -385,15 +433,22 @@ public class LostFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    LostItem lostItem = new LostItem(postInfo.getItem_type(),
-                            file.getPath(),
-                            new Date(postInfo.lost_time),
-                            postInfo.getItem_position(),
-                            postInfo.getStudent_id(),
-                            new Date(postInfo.getDate()),
-                            postInfo.isStatus(),
-                            postInfo.getPost_id());
+                    Date lost_time = new Date(abbrInfo.getLost_time());
+                    Date post_time = new Date(abbrInfo.getDate());
+                    debug_lost_time = abbrInfo.getLost_time();
+                    debug_post_time = abbrInfo.getDate();
+                    LostItem lostItem = new LostItem(abbrInfo.getItem_type(),
+                            file_full.getPath(),
+                            lost_time,
+                            abbrInfo.getItem_position(),
+                            abbrInfo.getStudent_id(),
+                            post_time,
+                            abbrInfo.isStatus(),
+                            abbrInfo.getPost_id(),
+                            abbrInfo.getItem_desc());
                     lostItemList.add(lostItem);
+                    Log.d("=======debug_add(lostItem)=======", " "+file_full.getPath());
+                    Log.d("=======debug_add(lostItem)=======", " "+abbrInfo.getItem_type());
                 }
 
             } catch (TException e) {
@@ -420,11 +475,12 @@ public class LostFragment extends Fragment {
                     lastPostId = lostItemList.get(lostItemList.size() - 1).getPostId();
                 }
                 //设置搜索状态
-                onSearch = true;
+//                onSearch = true;
                 Toast.makeText(getActivity(),"翻页成功！",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(getActivity(),"翻页失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"当前页面无法翻页",Toast.LENGTH_SHORT).show();
+//                Log.d("=======debug_page=======", " "+);
             }
         }
     }

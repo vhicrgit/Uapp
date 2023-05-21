@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Uapp</string>
     <string name="found">Found</string>
+    <string name="ip">210.45.112.121</string>
 </resources>

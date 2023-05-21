@@ -28,72 +28,107 @@
             android:textSize="24sp"
             android:layout_height="wrap_content" />
     </LinearLayout>
-    <!--输入框-->
-    <EditText
-        android:id="@+id/et_sno"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/il_sno"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingLeft="10dp"
-        android:theme="@style/MyEditText"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
         android:layout_marginTop="60dp"
         android:hint="学号"
-        android:textSize="20sp" />
-    <!--输入框-->
-    <EditText
-        android:id="@+id/et_username"
+        android:textSize="20sp"
+        android:textColorHint="@color/white">
+        <EditText
+            android:id="@+id/et_sno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:theme="@style/MyEditText"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/il_username"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingLeft="10dp"
-        android:theme="@style/MyEditText"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
         android:layout_marginTop="10dp"
         android:hint="用户名"
-        android:textSize="20sp" />
-    <!--输入框-->
-    <EditText
-        android:id="@+id/et_passward"
+        android:textSize="20sp"
+        android:textColorHint="@color/white">
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:theme="@style/MyEditText"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/il_passward"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:hint="登录密码"
-        android:textColor="@color/white"
-        android:paddingLeft="10dp"
-        android:theme="@style/MyEditText"
-        android:textColorHint="@color/white"
         android:textSize="20sp"
-        android:inputType="textPassword"/>
-    <EditText
-        android:id="@+id/et_confirm"
+        android:textColorHint="@color/white">
+        <EditText
+            android:id="@+id/et_passward"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:theme="@style/MyEditText"
+            android:textSize="20sp"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/il_confirm"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:hint="再次输入确认密码"
-        android:textColor="@color/white"
-        android:paddingLeft="10dp"
-        android:theme="@style/MyEditText"
-        android:textColorHint="@color/white"
         android:textSize="20sp"
-        android:inputType="textPassword"/>
-    <!--输入框-->
-    <EditText
-        android:id="@+id/et_email"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingLeft="10dp"
-        android:theme="@style/MyEditText"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:layout_marginTop="10dp"
-        android:hint="邮箱"
-        android:textSize="20sp" />
+        android:textColorHint="@color/white">
+        <EditText
+            android:id="@+id/et_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:theme="@style/MyEditText"
+            android:textSize="20sp"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/il_mail"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop="10dp"
+    android:hint="邮箱"
+    android:textSize="20sp"
+    android:textColorHint="@color/white">
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:theme="@style/MyEditText"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </com.google.android.material.textfield.TextInputLayout>
     <!--按钮-->
     <Button
         android:id="@+id/btn_register"

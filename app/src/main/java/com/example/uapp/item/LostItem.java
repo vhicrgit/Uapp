@@ -16,6 +16,7 @@ import com.example.uapp.R;
 import org.litepal.crud.LitePalSupport;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class LostItem extends LitePalSupport implements Serializable {
     private Date postTime;//上传时间
     private boolean state;//是否找回
     private String imagePath;//图片存放路径
+    private String thumbnailPath;//缩略图路径
 
     public LostItem(String name,int imageId,Date lostTime,String pos){
         this.name = name;
@@ -50,7 +52,8 @@ public class LostItem extends LitePalSupport implements Serializable {
         this.imagePath = imagePath;
     }
 
-    public LostItem(String name, String imagePath,Date lostTime,String pos,String posterId,Date postTime, boolean state, String postId){
+    public LostItem(String name, String imagePath,Date lostTime,String pos,String posterId,
+                    Date postTime, boolean state, String postId ,String desc){
         this.name = name;
         this.lostTime = lostTime;
         this.pos = pos;
@@ -59,6 +62,17 @@ public class LostItem extends LitePalSupport implements Serializable {
         this.postTime = postTime;
         this.state = state;
         this.postId = postId;
+        this.desc = desc;
+
+        File file = new File(imagePath);
+        String parentPath = file.getParent();
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            fileName = fileName.substring(0, dotIndex);
+        }
+        thumbnailPath = parentPath + File.separator + fileName + "_thumbnail.jpg";  // 构建新图片的路径
+
     }
 
     public String getName(){
@@ -136,6 +150,8 @@ public class LostItem extends LitePalSupport implements Serializable {
     }
 
     public String getPostId(){return this.postId;}
+
+    public String getThumbnailPath(){return this.thumbnailPath;}
 }
 
 

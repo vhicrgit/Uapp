@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:gravity="center"
     android:orientation="vertical"
     android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,6 +56,15 @@
                 android:text="Upload"
                 android:textAllCaps="false" />
 
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
             <Button
                 android:id="@+id/btn_post_lost"
                 android:layout_width="wrap_content"
@@ -56,6 +74,17 @@
                 android:background="#EEE"
                 android:padding="10dp"
                 android:text="UploadLost"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_post_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:layout_weight="1"
+                android:background="#EEE"
+                android:padding="10dp"
+                android:text="UploadFound"
                 android:textAllCaps="false" />
 
         </LinearLayout>

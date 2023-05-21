@@ -52,7 +52,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="丢失时间："
+                android:text="登记时间："
                 android:textColor="@color/brown_2"
                 android:textSize="17sp"
                 android:layout_height="wrap_content" />
@@ -73,7 +73,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="丢失地点"
+                android:text="存放地点"
                 android:textColor="@color/brown_2"
                 android:textSize="17sp"
                 android:layout_height="wrap_content" />

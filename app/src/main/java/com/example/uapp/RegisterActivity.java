@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void initializeUappServiceClient() throws TException {
         // 创建TTransport对象
         Log.d("MyApp", "In initializeItemServiceClient!");
-        TTransport transport = new TSocket("202.38.72.73", 7860);
+        TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
         Log.d("MyApp", "TSocket!");
         // 创建TProtocol对象
         TProtocol protocol = new TBinaryProtocol(transport);
@@ -101,6 +101,8 @@ public class RegisterActivity extends AppCompatActivity {
                 regist.setStudent_id(sno);
                 regist.setPassword(passward);
                 regist.setUsername(username);
+                regist.setContact("");
+//                regist.setHeadshot(null);
                 reactFromServer = UappServiceClient.register(regist);
                 return reactFromServer;
             } catch (TException e) {
