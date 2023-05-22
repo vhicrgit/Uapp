@@ -11,8 +11,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -108,6 +114,10 @@ public class ChangePasswardActivity extends AppCompatActivity {
                     showMsg("新密码不能为空");
                     return;
                 }
+                if(new_pwd.length() < 6){
+                    showMsg("新密码应不少于6个字符");
+                    return;
+                }
                 if(!Objects.equals(new_pwd, new_pwd_confirm)){
                     showMsg("两次输入新密码不一致");
                     return;
@@ -118,9 +128,22 @@ public class ChangePasswardActivity extends AppCompatActivity {
     }
 
     private void showConfirmationDialog() {
+        String message = "你确定要修改密码吗";
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(message);
+        // 设置"注销"两个字的样式
+        int startIndex = message.indexOf("修改密码");
+        int endIndex = startIndex + "修改密码".length();
+        // 创建一个StyleSpan对象来设置字体样式（加粗）
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        // 创建一个ForegroundColorSpan对象来设置字体颜色（红色）
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+        // 将StyleSpan和ForegroundColorSpan应用于"注销"两个字
+        spannableStringBuilder.setSpan(boldSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableStringBuilder.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("确认");
-        builder.setMessage("你确定要执行此操作吗？");
+        builder.setMessage(spannableStringBuilder);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

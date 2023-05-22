@@ -74,14 +74,23 @@ public class RegisterActivity extends AppCompatActivity {
                 email = et_email.getText().toString();
                 //检验两次输入密码是否无误
                 if(!Objects.equals(passward, confirm)){
-                    Toast.makeText(RegisterActivity.this,"两次输入密码不相同，请重新输入",
-                        Toast.LENGTH_SHORT).show();
+                    showMsg("两次输入密码不相同，请重新输入");
                     return;
                 }
                 //检测邮箱是否是科大邮箱
                 //TODO
                 //检测密码是否过短
-                //TODO
+                if(passward.length() < 6){
+                    showMsg("密码长度应不少于6位");
+                }
+                //检测用户名是否过短
+                if(username.length() < 4){
+                    showMsg("用户名过短");
+                }
+                //检测学号是否过短
+                if(sno.length() < 4){
+                    showMsg("学号错误");
+                }
                 //......
                 new RegisterTask().execute();
             }
@@ -128,4 +137,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
+    private void showMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
 }

@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
@@ -18,7 +19,9 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +36,7 @@ import com.example.uapp.config.Config;
 import com.example.uapp.task.GetAddressTask;
 import com.example.uapp.task.util.DateUtil;
 import com.example.uapp.task.util.SocketUtil;
+import com.example.uapp.utils.AppearanceUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;
@@ -59,6 +63,8 @@ public class HomeFragment extends Fragment {
 
     private static final int BUFFER_SIZE = 1024 * 8;
     private Socket mSocket; // 声明一个套接字对象
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     // 定义一个刷新任务，若无法定位则每隔一秒就尝试定位
     private final Runnable mRefresh = new Runnable() {
@@ -266,6 +272,23 @@ public class HomeFragment extends Fragment {
             mSocket.emit("image", buffer);
             position += size;
         }
+    }
+
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ViewTreeObserver observer = getView().getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(getView(),1.25f);
+                }
+                // 移除监听器，避免重复回调
+                getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 }
 

@@ -1,6 +1,8 @@
 package com.example.uapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.params.BlackLevelPattern;
@@ -13,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +28,7 @@ import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -65,18 +69,15 @@ public class LostFragment extends Fragment {
     private Boolean onSearch = false;//表示当前是否在搜索中
     private long debug_lost_time;
     private long debug_post_time;
+    private SharedPreferences pref;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private UappService.Client UappServiceClient;
     private void initializeUappServiceClient() throws TException {
-        // 创建TTransport对象
         TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
-        // 创建TProtocol对象
         TProtocol protocol = new TBinaryProtocol(transport);
-        // 创建ItemService.Client对象
         UappServiceClient = new UappService.Client(protocol);
-        // 打开transport
         transport.open();
     }
 
@@ -94,6 +95,8 @@ public class LostFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         toolbar.setTitle("失物登记列表");
+        //
+        pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -137,7 +140,6 @@ public class LostFragment extends Fragment {
             public void onRefresh() {
                 lostItemList.clear();
                 new LostFragment.getPostTask().execute();
-//                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -169,9 +171,6 @@ public class LostFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
-
         // *********** 翻页 *************
         Button btn_next = view.findViewById(R.id.btn_next);
         Button btn_prev = view.findViewById(R.id.btn_prev);
@@ -195,9 +194,15 @@ public class LostFragment extends Fragment {
                 }
             }
         });
-
+        //关怀模式
+        if(pref.getBoolean("careMOde",false)){
+            //关怀模式
+            AppearanceUtils.increaseFontSize(view,1.25f);
+        }
         return view;
     }
+
+
 
     private void initLostItem() throws ParseException {
         List<LostItem> lostItems = LitePal.findAll(LostItem.class);
@@ -483,6 +488,23 @@ public class LostFragment extends Fragment {
 //                Log.d("=======debug_page=======", " "+);
             }
         }
+    }
+
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ViewTreeObserver observer = getView().getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(getView(),1.25f);
+                }
+                // 移除监听器，避免重复回调
+                getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
 }

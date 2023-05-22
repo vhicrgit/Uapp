@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ import com.example.uapp.item.LostItem;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
 import com.example.uapp.utils.CameraUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -61,6 +64,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class PostLostActivity extends AppCompatActivity {
     //*********** item数据相关 ************
+    private SharedPreferences pref;
     private String itemName;
     private int imageId;
     private java.util.Date lostTime;
@@ -563,7 +567,6 @@ public class PostLostActivity extends AppCompatActivity {
         if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
             fileName = fileName.substring(0, dotIndex);
         }
-
         // 保存缩小后的图片
         thumbnailPath = parentPath + File.separator + fileName + "_thumbnail.jpg";  // 构建新图片的路径
 
@@ -574,6 +577,23 @@ public class PostLostActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 }

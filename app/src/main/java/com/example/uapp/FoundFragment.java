@@ -1,6 +1,8 @@
 package com.example.uapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.params.BlackLevelPattern;
@@ -13,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +28,7 @@ import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -65,6 +69,7 @@ public class FoundFragment extends Fragment {
     private Boolean onSearch = false;//表示当前是否在搜索中
     private long debug_lost_time;
     private long debug_post_time;
+    private SharedPreferences pref;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -483,6 +488,23 @@ public class FoundFragment extends Fragment {
 //                Log.d("=======debug_page=======", " "+);
             }
         }
+    }
+
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ViewTreeObserver observer = getView().getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(getView(),1.25f);
+                }
+                // 移除监听器，避免重复回调
+                getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
 }

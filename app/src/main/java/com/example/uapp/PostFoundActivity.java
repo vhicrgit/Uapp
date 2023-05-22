@@ -23,6 +23,8 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -39,6 +41,7 @@ import com.example.uapp.task.util.SocketUtil;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
 import com.example.uapp.utils.CameraUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -79,6 +82,7 @@ import io.socket.client.Socket;
 
 public class PostFoundActivity extends AppCompatActivity {
     //*********** item数据相关 ************
+    private SharedPreferences pref;
     private String itemName;
     private int imageId;
     private java.util.Date lostTime;
@@ -752,5 +756,23 @@ public class PostFoundActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
         mSocket.connect(); // 建立Socket连接
+    }
+
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 }

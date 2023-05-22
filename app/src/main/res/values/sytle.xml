@@ -99,4 +99,14 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+
+    <style name="CustomSwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+
+        <item name="android:textOn">On</item>
+        <item name="android:textOff">Off</item>
+        <item name="android:thumbTextPadding">40dp</item> <!-- 调整按钮图标和文字之间的距离 -->
+        <item name="android:paddingStart">20dp</item> <!-- 调整文字与左侧边缘的距离 -->
+        <item name="android:paddingEnd">8dp</item> <!-- 调整文字与右侧边缘的距离 -->
+    </style>
 </resources>

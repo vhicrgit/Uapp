@@ -1,25 +1,36 @@
 package com.example.uapp;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +46,7 @@ import com.example.uapp.thr.LoginInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.SetUserInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
 import com.example.uapp.utils.CameraUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -58,11 +70,14 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 public class MineFragment extends Fragment {
+    private View view = null;
     private static final int LOG_IN = 3;
     private boolean loggedIn;
     //权限请求
@@ -97,6 +112,13 @@ public class MineFragment extends Fragment {
     private TextView tv_sno;
     private TextView tv_username;
     private SuperTextView tv_change_passward;
+    private SuperTextView tv_user_info;
+    private SuperTextView tv_post_history;
+    private SuperTextView tv_share;
+    private SuperTextView tv_setting;
+    private SwitchCompat switchCompat;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     private UappService.Client UappServiceClient;
     private void initializeUappServiceClient() throws TException {
@@ -114,9 +136,22 @@ public class MineFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+//        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+        Log.d("=======debug_view_exist=======", ": "+(view != null));
+        if (view == null) {
+            // 创建新的视图
+            view = inflater.inflate(R.layout.fragment_mine, container, false);
+        }
+        else{
+            return view;
+        }
         ImageView headShot = view.findViewById(R.id.gray_headshot);
-        SharedPreferences pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
+        tv_change_passward = view.findViewById(R.id.tv_change_passward);
+        tv_user_info = view.findViewById(R.id.tv_user_info);
+        tv_post_history = view.findViewById(R.id.tv_post_history);
+        tv_share = view.findViewById(R.id.tv_share);
+        tv_setting = view.findViewById(R.id.tv_setting);
+        pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
         loggedIn = pref.getBoolean("loggedIn",false);
         tv_username = view.findViewById(R.id.tv_username);
         tv_sno = view.findViewById(R.id.tv_sno);
@@ -124,25 +159,14 @@ public class MineFragment extends Fragment {
             tv_username.setText("未登录");
             tv_sno.setText("");
         } else {
-            SharedPreferences userInfo = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
-            tv_username.setText(userInfo.getString("username","匿名"));
-            tv_sno.setText(userInfo.getString("sno",""));
+            tv_username.setText(pref.getString("username","匿名"));
+            tv_sno.setText(pref.getString("sno",""));
         }
         headShot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivityForResult(intent, LOG_IN);
-//                SharedPreferences pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
-//                loggedIn = pref.getBoolean("loggedIn",false);
-//                if(loggedIn == false){
-//                    tv_username.setText("未登录");
-//                    tv_sno.setText("");
-//                } else {
-//                    SharedPreferences userInfo = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
-//                    tv_username.setText(userInfo.getString("username","匿名"));
-//                    tv_sno.setText(userInfo.getString("sno",""));
-//                }
             }
         });
 
@@ -175,15 +199,7 @@ public class MineFragment extends Fragment {
         btn_log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
-                editor.putBoolean("loggedIn",false);
-                editor.apply();
-                tv_username.setText("未登录");
-                tv_sno.setText("");
-                Glide.with(getActivity()).load(R.mipmap.ic_launcher).apply(requestOptions).into(ivHead);
-                String headShotPath = getActivity().getFilesDir() + File.separator + "headshot.jpg";
-                File file = new File(headShotPath);
-                boolean deleted = file.delete();
+                showConfirmationDialog();
             }
         });
 
@@ -192,9 +208,16 @@ public class MineFragment extends Fragment {
         toolbar.setTitle("我的信息");
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
+        //个人信息
+        tv_user_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UserInfoActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //修改密码
-        tv_change_passward = view.findViewById(R.id.tv_change_passward);
         tv_change_passward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,6 +225,28 @@ public class MineFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        //关怀模式
+        switchCompat = view.findViewById(R.id.modeSwitch);
+//        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {// 启用关怀模式
+//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+//                    editor.putBoolean("careMode",true);
+//                    editor.apply();
+//                    AppearanceUtils.increaseFontSize(view,1.25f);
+//                } else {// 关闭关怀模式
+//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+//                    editor.putBoolean("careMode",false);
+//                    editor.apply();
+//                    AppearanceUtils.increaseFontSize(view,0.8f);
+//                }
+//            }
+//        });
+//        if(pref.getBoolean("careMOde",false)){
+//            //关怀模式
+//            AppearanceUtils.increaseFontSize(view,1.25f);
+//        }
 
         //个人信息
         //TODO
@@ -209,8 +254,69 @@ public class MineFragment extends Fragment {
         //常用位置
         //TODO
 
+
         return view;
     }
+
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        switchCompat = view.findViewById(R.id.modeSwitch);
+//        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {// 启用关怀模式
+//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+//                    editor.putBoolean("careMode",true);
+//                    editor.apply();
+//                    AppearanceUtils.increaseFontSize(view,1.25f);
+//                } else {// 关闭关怀模式
+//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+//                    editor.putBoolean("careMode",false);
+//                    editor.apply();
+//                    AppearanceUtils.increaseFontSize(view,0.8f);
+//                }
+//            }
+//        });
+////        AppearanceUtils.increaseFontSize(view,1.25f);
+//    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ViewTreeObserver observer = switchCompat.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    switchCompat.setChecked(true);
+                    AppearanceUtils.increaseFontSize(view,1.25f);
+                }
+                switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {// 启用关怀模式
+                            editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+                            editor.putBoolean("careMode",true);
+                            editor.apply();
+                            AppearanceUtils.increaseFontSize(view,1.25f);
+                        } else {// 关闭关怀模式
+                            editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+                            editor.putBoolean("careMode",false);
+                            editor.apply();
+                            AppearanceUtils.increaseFontSize(view,0.8f);
+                        }
+                    }
+                });
+                // 移除监听器，避免重复回调
+                switchCompat.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
+
+
 
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
@@ -443,52 +549,53 @@ public class MineFragment extends Fragment {
             }
         }
     }
+    private void showConfirmationDialog() {
+        String message = "你确定要注销吗";
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(message);
+        // 设置"注销"两个字的样式
+        int startIndex = message.indexOf("注销");
+        int endIndex = startIndex + "注销".length();
+        // 创建一个StyleSpan对象来设置字体样式（加粗）
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        // 创建一个ForegroundColorSpan对象来设置字体颜色（红色）
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+        // 将StyleSpan和ForegroundColorSpan应用于"注销"两个字
+        spannableStringBuilder.setSpan(boldSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableStringBuilder.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-//    private class getUserInfoTask extends AsyncTask<Void, Void, Boolean> {
-//        @Override
-//        protected Boolean doInBackground(Void... voids) {
-//            try {
-//                Boolean logInSuccess;
-//                initializeUappServiceClient();
-//                SharedPreferences pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
-//                String sno = pref.getString("sno","匿名");
-//                RegisterInfo registerInfo = new RegisterInfo();
-//                registerInfo = UappServiceClient.getUserInfo(sno);
-//
-//                SharedPreferences.Editor editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
-//                editor.putString("sno",sno);
-//                editor.putString("username",username);
-//                editor.putString("passward",passward);
-//                editor.putString("email",email);
-//
-//                return true;
-//            } catch (TException e) {
-//                e.printStackTrace();
-//                return false;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Boolean result){
-//            if(result){
-//                Toast.makeText(LoginActivity.this,"登陆成功！",
-//                        Toast.LENGTH_SHORT).show();
-//                passward = et_passward.getText().toString();
-//                loggedIn = true;
-//                SharedPreferences.Editor editor = getSharedPreferences("login_info",MODE_PRIVATE).edit();
-//                editor.putString("sno",sno);
-//                editor.putString("username",username);
-//                editor.putString("passward",passward);
-//                editor.putString("email",email);
-//                editor.putBoolean("loggedIn",loggedIn);
-//                editor.apply();
-//                finish();
-//            }
-//            else{
-//                Toast.makeText(getActivity(),"获取用户信息失败",
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("确认");
+        builder.setMessage(spannableStringBuilder);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 用户点击了确认按钮
+                performAction();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 用户点击了取消按钮
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void performAction() {
+        editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
+        editor.putBoolean("loggedIn",false);
+        editor.apply();
+        tv_username.setText("未登录");
+        tv_sno.setText("");
+        Glide.with(getActivity()).load(R.mipmap.ic_launcher).apply(requestOptions).into(ivHead);
+        String headShotPath = getActivity().getFilesDir() + File.separator + "headshot.jpg";
+        File file = new File(headShotPath);
+        boolean deleted = file.delete();
+    }
+
+
 
 }
