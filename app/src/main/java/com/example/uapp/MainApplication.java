@@ -1,10 +1,14 @@
 package com.example.uapp;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+
+import com.example.uapp.config.Config;
 
 import org.litepal.LitePal;
 
 public class MainApplication extends Application {
+    private SharedPreferences pref;
     private static MainApplication mApp; // 声明一个当前应用的静态实例
 
     // 利用单例模式获取当前应用的唯一实例

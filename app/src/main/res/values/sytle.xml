@@ -109,4 +109,5 @@
         <item name="android:paddingStart">20dp</item> <!-- 调整文字与左侧边缘的距离 -->
         <item name="android:paddingEnd">8dp</item> <!-- 调整文字与右侧边缘的距离 -->
     </style>
+
 </resources>

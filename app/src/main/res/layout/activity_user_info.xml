@@ -24,55 +24,53 @@
 
         <View style="@style/horizontal_line_style" />
         <com.allen.library.SuperTextView
-            android:id="@+id/tv_user_info"
+            android:id="@+id/tv_sno"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
+            stv:sLeftViewMarginLeft="20dp"
+            stv:sRightViewMarginRight="30dp"
+            stv:sLeftTextString="学号/工号"
+            stv:sLeftTextSize="17sp"
+            stv:sRightTextSize="17sp"
+            stv:sRightTextColor="@color/gray"
+            stv:sLeftTextColor="@color/color_000000"/>
+
+        <com.allen.library.SuperTextView
+            android:id="@+id/tv_username"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            stv:sLeftViewMarginLeft="20dp"
             stv:sLeftTextString="用户名"
             stv:sLeftTextSize="17sp"
             stv:sLeftTextColor="@color/color_000000"
+            stv:sRightTextSize="17sp"
+            stv:sRightTextColor="@color/gray"
+            stv:sRightIconRes="@drawable/ic_right_next" />
+
+        <com.allen.library.SuperTextView
+            android:id="@+id/tv_email"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            stv:sLeftViewMarginLeft="20dp"
+            stv:sLeftTextString="邮箱"
+            stv:sLeftTextSize="17sp"
+            stv:sLeftTextColor="@color/black"
+            stv:sRightTextSize="17sp"
+            stv:sRightTextColor="@color/gray"
             stv:sRightIconRes="@drawable/ic_right_next" />
 
 
         <com.allen.library.SuperTextView
-            android:id="@+id/tv_change_passward"
+            android:id="@+id/tv_contact"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            stv:sLeftTextString="修改密码"
-            stv:sLeftTextSize="15sp"
-            stv:sLeftTextColor="@color/color_000000"
-            stv:sLeftIconRes="@android:drawable/ic_lock_idle_lock"
+            android:layout_height="60dp"
+            stv:sLeftViewMarginLeft="20dp"
+            stv:sLeftTextString="联系方式"
+            stv:sLeftTextSize="17sp"
+            stv:sLeftTextColor="@color/black"
+            stv:sRightTextSize="17sp"
+            stv:sRightTextColor="@color/gray"
             stv:sRightIconRes="@drawable/ic_right_next" />
 
-
-        <com.allen.library.SuperTextView
-            android:id="@+id/tv_sign_in"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            stv:sLeftTextString="发帖记录"
-            stv:sLeftTextSize="15sp"
-            stv:sLeftTextColor="@color/color_000000"
-            stv:sLeftIconRes="@android:drawable/ic_menu_agenda"
-            stv:sRightIconRes="@drawable/ic_right_next" />
-
-
-        <com.allen.library.SuperTextView
-            android:id="@+id/tv_share"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            stv:sLeftTextString="分享给朋友"
-            stv:sLeftTextSize="15sp"
-            stv:sLeftTextColor="@color/color_000000"
-            stv:sLeftIconRes="@android:drawable/ic_menu_share"
-            stv:sRightIconRes="@drawable/ic_right_next" />
-
-        <com.allen.library.SuperTextView
-            android:id="@+id/tv_setting"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            stv:sLeftTextString="设置"
-            stv:sLeftTextSize="15sp"
-            stv:sLeftTextColor="@color/color_000000"
-            stv:sLeftIconRes="@android:drawable/ic_menu_manage"
-            stv:sRightIconRes="@drawable/ic_right_next" />
     </LinearLayout>
 </ScrollView>

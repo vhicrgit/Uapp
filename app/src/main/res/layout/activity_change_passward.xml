@@ -28,12 +28,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/il_old_pwd"
-            android:layout_width="320dp"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:hint="请输入旧密码"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColorHint="@color/dark_gray">
             <EditText
                 android:id="@+id/et_old_password"
@@ -45,12 +45,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/il_new_pwd"
-            android:layout_width="320dp"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:hint="请输入新密码"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColorHint="@color/dark_gray">
             <EditText
                 android:id="@+id/et_new_password"
@@ -63,12 +63,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/il_confirm"
-            android:layout_width="320dp"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:hint="确认密码"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColorHint="@color/dark_gray">
             <EditText
                 android:id="@+id/et_again_password"
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:text="tip_password_not" />
+            android:text="密码应不少于6个字符" />
 
         <Button
             android:id="@+id/btn_submit"
@@ -91,6 +91,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/selector_btn_negative"
             android:text="提交" />
     </LinearLayout>

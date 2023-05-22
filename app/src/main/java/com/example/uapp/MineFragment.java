@@ -39,6 +39,7 @@ import com.allen.library.SuperTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
 import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
@@ -46,6 +47,7 @@ import com.example.uapp.thr.LoginInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.SetUserInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.user.AddrActivity;
 import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
 import com.example.uapp.utils.CameraUtils;
@@ -114,11 +116,12 @@ public class MineFragment extends Fragment {
     private SuperTextView tv_change_passward;
     private SuperTextView tv_user_info;
     private SuperTextView tv_post_history;
-    private SuperTextView tv_share;
+    private SuperTextView tv_addr;
     private SuperTextView tv_setting;
     private SwitchCompat switchCompat;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private Toolbar toolbar;
 
     private UappService.Client UappServiceClient;
     private void initializeUappServiceClient() throws TException {
@@ -149,7 +152,7 @@ public class MineFragment extends Fragment {
         tv_change_passward = view.findViewById(R.id.tv_change_passward);
         tv_user_info = view.findViewById(R.id.tv_user_info);
         tv_post_history = view.findViewById(R.id.tv_post_history);
-        tv_share = view.findViewById(R.id.tv_share);
+        tv_addr = view.findViewById(R.id.tv_addr);
         tv_setting = view.findViewById(R.id.tv_setting);
         pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
         loggedIn = pref.getBoolean("loggedIn",false);
@@ -204,10 +207,12 @@ public class MineFragment extends Fragment {
         });
 
         //导航栏及菜单
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle("我的信息");
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
         //个人信息
         tv_user_info.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +227,13 @@ public class MineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ChangePasswardActivity.class);
+                startActivity(intent);
+            }
+        });
+        tv_addr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AddrActivity.class);
                 startActivity(intent);
             }
         });
@@ -253,6 +265,13 @@ public class MineFragment extends Fragment {
 
         //常用位置
         //TODO
+        tv_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SettingActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         return view;
@@ -597,5 +616,11 @@ public class MineFragment extends Fragment {
     }
 
 
-
+    public void onResume() {
+        super.onResume();
+        tv_sno.setText(pref.getString("sno",""));
+        tv_username.setText(pref.getString("username",""));
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
+    }
 }

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.RegisterInfo;
@@ -137,6 +139,8 @@ public class PostLostActivity extends AppCompatActivity {
         toolbar.setTitle("丢失物品上传");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
 
 
         btn_img.setOnClickListener(new View.OnClickListener() {
@@ -595,5 +599,11 @@ public class PostLostActivity extends AppCompatActivity {
                 rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {finish();}
+        return super.onOptionsItemSelected(item);
     }
 }

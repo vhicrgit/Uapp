@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.thr.DetailInfo;
 import com.example.uapp.thr.ReqInfo;
 import com.example.uapp.thr.UappService;
@@ -80,6 +81,8 @@ public class FoundItemDetailActivity extends AppCompatActivity {
         contact = findViewById(R.id.contact);
         description = findViewById(R.id.description);
         imageView = findViewById(R.id.image);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
 
         Intent intent = getIntent();
         item_name = intent.getStringExtra("itemName");

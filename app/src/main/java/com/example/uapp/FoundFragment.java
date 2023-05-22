@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
 import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
@@ -99,6 +100,8 @@ public class FoundFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         toolbar.setTitle("失物招领列表");
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {

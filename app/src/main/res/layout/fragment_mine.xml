@@ -102,7 +102,7 @@ android:layout_height="match_parent">
         stv:sLeftTextString="个人信息"
         stv:sLeftTextSize="15sp"
         stv:sLeftTextColor="@color/color_000000"
-        stv:sLeftIconRes="@android:drawable/ic_menu_myplaces"
+        stv:sLeftIconRes="@android:drawable/ic_menu_edit"
         stv:sRightIconRes="@drawable/ic_right_next" />
 
 
@@ -129,13 +129,13 @@ android:layout_height="match_parent">
 
 
     <com.allen.library.SuperTextView
-        android:id="@+id/tv_share"
+        android:id="@+id/tv_addr"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        stv:sLeftTextString="分享给朋友"
+        stv:sLeftTextString="常用地址"
         stv:sLeftTextSize="15sp"
         stv:sLeftTextColor="@color/color_000000"
-        stv:sLeftIconRes="@android:drawable/ic_menu_share"
+        stv:sLeftIconRes="@android:drawable/ic_menu_myplaces"
         stv:sRightIconRes="@drawable/ic_right_next" />
 
     <com.allen.library.SuperTextView

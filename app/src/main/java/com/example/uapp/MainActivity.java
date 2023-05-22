@@ -6,16 +6,19 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.task.util.PermissionUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 
 public class MainActivity extends AppCompatActivity {
+    private SharedPreferences pref;
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
     @Override

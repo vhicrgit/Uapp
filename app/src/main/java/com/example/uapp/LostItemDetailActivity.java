@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.thr.DetailInfo;
 import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.ReqInfo;
@@ -83,6 +84,9 @@ public class LostItemDetailActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
+
         itemName = findViewById(R.id.item_name);
         lostTime = findViewById(R.id.lost_time);
         lostPos = findViewById(R.id.lost_pos);

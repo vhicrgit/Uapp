@@ -22,10 +22,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -118,75 +121,69 @@ public class PostFoundActivity extends AppCompatActivity {
     private Button btn_img;
     private ImageView iv_img;
     private EditText et_pos;
+    private CheckBox cb_addr;
     //******************* 标识 *******************
     private Boolean imageExist = false;
     private UappService.Client UappServiceClient;
 
-    private final Map<String, String> providerMap = new HashMap<>();
+//    private final Map<String, String> providerMap = new HashMap<>();
 
-    private String mLocationDesc = ""; // 定位说明
-    private LocationManager mLocationMgr; // 声明一个定位管理器对象
-    private final Criteria criteria = new Criteria(); // 创建一个定位准则对象
-    private final Handler mHandler = new Handler(Looper.myLooper()); // 声明一个处理器对象
-    private boolean isLocationEnable = false; // 定位服务是否可用
-
-    private Socket mSocket; // 声明一个套接字对象
+//    private String mLocationDesc = ""; // 定位说明
+//    private LocationManager mLocationMgr; // 声明一个定位管理器对象
+//    private final Criteria criteria = new Criteria(); // 创建一个定位准则对象
+//    private final Handler mHandler = new Handler(Looper.myLooper()); // 声明一个处理器对象
+//    private boolean isLocationEnable = false; // 定位服务是否可用
+//
+//    private Socket mSocket; // 声明一个套接字对象
 
     private void initializeUappServiceClient() throws TException {
-        // 创建TTransport对象
         TTransport transport = new TSocket(getString(R.string.ip), getResources().getInteger(R.integer.port));
-        // 创建TProtocol对象
         TProtocol protocol = new TBinaryProtocol(transport);
-        // 创建ItemService.Client对象
         UappServiceClient = new UappService.Client(protocol);
-        // 打开transport
         transport.open();
     }
 
-    private void closeItemServiceClient() {
-        if (UappServiceClient != null) {
-            UappServiceClient.getInputProtocol().getTransport().close();
-        }
-    }
 
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            showLocation(location); // 显示定位结果文本
-        }
+//    private final LocationListener mLocationListener = new LocationListener() {
+//        @Override
+//        public void onLocationChanged(Location location) {
+//            showLocation(location); // 显示定位结果文本
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String arg0) {
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String arg0) {
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+//        }
+//    };
 
-        @Override
-        public void onProviderDisabled(String arg0) {
-        }
-
-        @Override
-        public void onProviderEnabled(String arg0) {
-        }
-
-        @Override
-        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        }
-    };
-
-    private final Runnable mRefresh = new Runnable() {
-        @Override
-        public void run() {
-            if (!isLocationEnable) {
-                initLocation(); // 初始化定位服务
-                mHandler.postDelayed(this, 1000);
-            }
-        }
-    };
+//    private final Runnable mRefresh = new Runnable() {
+//        @Override
+//        public void run() {
+//            if (!isLocationEnable) {
+//                initLocation(); // 初始化定位服务
+//                mHandler.postDelayed(this, 1000);
+//            }
+//        }
+//    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_found);
+        pref = getSharedPreferences("login_info", MODE_PRIVATE);
         LitePal.getDatabase();
         EditText et_item_name = findViewById(R.id.et_type);
         et_pos = findViewById(R.id.et_pos);
         EditText et_desc = findViewById(R.id.et_desc);
         Button btn_post = findViewById(R.id.btn_post);
         EditText et_lost_time = findViewById(R.id.et_lost_time);
+        cb_addr = findViewById(R.id.cb_addr);
 
         btn_img = findViewById(R.id.btn_img);
         iv_img = findViewById(R.id.iv_img);
@@ -197,6 +194,8 @@ public class PostFoundActivity extends AppCompatActivity {
         toolbar.setTitle("捡到失物上传");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
 
         //自动设置时间
         java.util.Date currentDate = new java.util.Date();
@@ -204,11 +203,22 @@ public class PostFoundActivity extends AppCompatActivity {
         String formattedDate = dateFormat.format(currentDate);
         et_lost_time.setText(formattedDate);
 
-        //自动设置地点
+        //设置常用地点
         //TODO
+        String commonAddr = pref.getString("addr","");
+        cb_addr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    if(!commonAddr.equals("")){
+                        et_pos.setText(commonAddr);
+                    }
+                } else {
+                    et_pos.setText("");
+                }
+            }
+        });
 
-        providerMap.put("gps", "卫星定位");
-        providerMap.put("network", "网络定位");
 
         btn_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -658,105 +668,105 @@ public class PostFoundActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mHandler.removeCallbacks(mRefresh); // 移除定位刷新任务
-        initLocation(); // 初始化定位服务
-        mHandler.postDelayed(mRefresh, 100); // 延迟100毫秒启动定位刷新任务
-        // 初始化套接字
-        initSocket();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        mHandler.removeCallbacks(mRefresh); // 移除定位刷新任务
+//        initLocation(); // 初始化定位服务
+//        mHandler.postDelayed(mRefresh, 100); // 延迟100毫秒启动定位刷新任务
+//        // 初始化套接字
+//        initSocket();
+//    }
+//
+//    @SuppressLint("SetTextI18n")
+//    private void initLocation() {
+//        // 从系统服务中获取定位管理器
+//        mLocationMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//        criteria.setAccuracy(Criteria.ACCURACY_FINE); // 设置定位精确度
+//        criteria.setAltitudeRequired(true); // 设置是否需要海拔信息
+//        criteria.setBearingRequired(true); // 设置是否需要方位信息
+//        criteria.setCostAllowed(true); // 设置是否允许运营商收费
+//        criteria.setPowerRequirement(Criteria.POWER_LOW); // 设置对电源的需求
+//        // 获取定位管理器的最佳定位提供者
+//        String bestProvider = mLocationMgr.getBestProvider(criteria, true);
+//
+//        if (bestProvider != null && mLocationMgr.isProviderEnabled(bestProvider)) { // 定位提供者当前可用
+//            et_pos.setText("正在获取" + providerMap.get(bestProvider) + "对象");
+//            mLocationDesc = String.format("定位类型为%s", providerMap.get(bestProvider));
+//            beginLocation(bestProvider); // 开始定位
+//            isLocationEnable = true;
+//        } else { // 定位提供者暂不可用
+//            et_pos.setText(providerMap.get(bestProvider) + "不可用");
+//            isLocationEnable = false;
+//        }
+//    }
 
-    @SuppressLint("SetTextI18n")
-    private void initLocation() {
-        // 从系统服务中获取定位管理器
-        mLocationMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        criteria.setAccuracy(Criteria.ACCURACY_FINE); // 设置定位精确度
-        criteria.setAltitudeRequired(true); // 设置是否需要海拔信息
-        criteria.setBearingRequired(true); // 设置是否需要方位信息
-        criteria.setCostAllowed(true); // 设置是否允许运营商收费
-        criteria.setPowerRequirement(Criteria.POWER_LOW); // 设置对电源的需求
-        // 获取定位管理器的最佳定位提供者
-        String bestProvider = mLocationMgr.getBestProvider(criteria, true);
-
-        if (bestProvider != null && mLocationMgr.isProviderEnabled(bestProvider)) { // 定位提供者当前可用
-            et_pos.setText("正在获取" + providerMap.get(bestProvider) + "对象");
-            mLocationDesc = String.format("定位类型为%s", providerMap.get(bestProvider));
-            beginLocation(bestProvider); // 开始定位
-            isLocationEnable = true;
-        } else { // 定位提供者暂不可用
-            et_pos.setText(providerMap.get(bestProvider) + "不可用");
-            isLocationEnable = false;
-        }
-    }
-
-    private void beginLocation(String method) {
-        // 设置定位管理器的位置变更监听器
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mLocationMgr.requestLocationUpdates(method, 300, 0, mLocationListener);
-        // 获取最后一次成功定位的位置信息
-        Location location = mLocationMgr.getLastKnownLocation(method);
-        showLocation(location); // 显示定位结果文本
-    }
-
-    // 设置定位结果文本
-    @SuppressLint("SetTextI18n")
-    private void showLocation(Location location) {
-        if (location != null) {
-            // 创建一个根据经纬度查询详细地址的任务
-//            GetAddressTask task = new GetAddressTask(getActivity(), location, address -> {
-//                @SuppressLint("DefaultLocale") String desc = String.format("%s\n定位信息如下： " +
-//                                "\n\t定位时间为%s，" + "\n\t经度为%f，纬度为%f，" +
-//                                "\n\t高度为%d米，精度为%d米，" +
+//    private void beginLocation(String method) {
+//        // 设置定位管理器的位置变更监听器
+//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        mLocationMgr.requestLocationUpdates(method, 300, 0, mLocationListener);
+//        // 获取最后一次成功定位的位置信息
+//        Location location = mLocationMgr.getLastKnownLocation(method);
+//        showLocation(location); // 显示定位结果文本
+//    }
+//
+//    // 设置定位结果文本
+//    @SuppressLint("SetTextI18n")
+//    private void showLocation(Location location) {
+//        if (location != null) {
+//            // 创建一个根据经纬度查询详细地址的任务
+////            GetAddressTask task = new GetAddressTask(getActivity(), location, address -> {
+////                @SuppressLint("DefaultLocale") String desc = String.format("%s\n定位信息如下： " +
+////                                "\n\t定位时间为%s，" + "\n\t经度为%f，纬度为%f，" +
+////                                "\n\t高度为%d米，精度为%d米，" +
+////                                "\n\t详细地址为%s。",
+////                        mLocationDesc, DateUtil.formatDate(location.getTime()),
+////                        location.getLongitude(), location.getLatitude(),
+////                        Math.round(location.getAltitude()), Math.round(location.getAccuracy()),
+////                        address);
+////                textLocation.setText(desc);
+////            });
+//            GetAddressTask task = new GetAddressTask(this, location, address -> {
+//                @SuppressLint("DefaultLocale") String desc = String.format(
+//                        "定位时间为%s，" +
 //                                "\n\t详细地址为%s。",
-//                        mLocationDesc, DateUtil.formatDate(location.getTime()),
-//                        location.getLongitude(), location.getLatitude(),
-//                        Math.round(location.getAltitude()), Math.round(location.getAccuracy()),
+//                        DateUtil.formatDate(location.getTime()),
 //                        address);
-//                textLocation.setText(desc);
+//                et_pos.setText(desc);
 //            });
-            GetAddressTask task = new GetAddressTask(this, location, address -> {
-                @SuppressLint("DefaultLocale") String desc = String.format(
-                        "定位时间为%s，" +
-                                "\n\t详细地址为%s。",
-                        DateUtil.formatDate(location.getTime()),
-                        address);
-                et_pos.setText(desc);
-            });
-            task.start(); // 启动地址查询任务
-        } else {
-            et_pos.setText(mLocationDesc + "\n暂未获取到定位对象");
-        }
-    }
+//            task.start(); // 启动地址查询任务
+//        } else {
+//            et_pos.setText(mLocationDesc + "\n暂未获取到定位对象");
+//        }
+//    }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mLocationMgr.removeUpdates(mLocationListener); // 移除定位管理器的位置变更监听器
-    }
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mLocationMgr.removeUpdates(mLocationListener); // 移除定位管理器的位置变更监听器
+//    }
 
-    // 初始化套接字
-    private void initSocket() {
-        // 检查能否连上Socket服务器
-        SocketUtil.checkSocketAvailable(this, Config.BASE_IP, Config.BASE_PORT);
-        try {
-            @SuppressLint("DefaultLocale") String uri = String.format("http://%s:%d/", Config.BASE_IP, Config.BASE_PORT);
-            mSocket = IO.socket(uri); // 创建指定地址和端口的套接字实例
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        mSocket.connect(); // 建立Socket连接
-    }
+//    // 初始化套接字
+//    private void initSocket() {
+//        // 检查能否连上Socket服务器
+//        SocketUtil.checkSocketAvailable(this, Config.BASE_IP, Config.BASE_PORT);
+//        try {
+//            @SuppressLint("DefaultLocale") String uri = String.format("http://%s:%d/", Config.BASE_IP, Config.BASE_PORT);
+//            mSocket = IO.socket(uri); // 创建指定地址和端口的套接字实例
+//        } catch (URISyntaxException e) {
+//            throw new RuntimeException(e);
+//        }
+//        mSocket.connect(); // 建立Socket连接
+//    }
 
     protected void onStart() {
         super.onStart();
@@ -774,5 +784,11 @@ public class PostFoundActivity extends AppCompatActivity {
                 rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {finish();}
+        return super.onOptionsItemSelected(item);
     }
 }

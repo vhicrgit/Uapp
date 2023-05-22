@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
 import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
@@ -95,6 +96,8 @@ public class LostFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         toolbar.setTitle("失物登记列表");
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
         //
         pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
         requireActivity().addMenuProvider(new MenuProvider() {

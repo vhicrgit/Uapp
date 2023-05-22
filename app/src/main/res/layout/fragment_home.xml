@@ -20,87 +20,49 @@
         android:layout_weight="3"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/show_photo"
-            android:layout_width="400px"
-            android:layout_height="600px"
-            android:layout_weight="2"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/bg" />
+<!--        <ImageView-->
+<!--            android:id="@+id/show_photo"-->
+<!--            android:layout_width="400px"-->
+<!--            android:layout_height="600px"-->
+<!--            android:layout_weight="2"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:src="@drawable/bg" />-->
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/take_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10sp"
-                android:layout_weight="1"
-                android:background="#EEE"
-                android:padding="10dp"
-                android:text="Take"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/upload_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10sp"
-                android:layout_weight="1"
-                android:background="#EEE"
-                android:padding="10dp"
-                android:text="Upload"
-                android:textAllCaps="false" />
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="vertical">
             <Button
                 android:id="@+id/btn_post_lost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#EEE"
+                android:background="@color/light_gray"
                 android:padding="10dp"
-                android:text="UploadLost"
+                android:text="丢  失  物  品"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                android:textStyle="bold"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_post_found"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#EEE"
+                android:background="@color/orange"
                 android:padding="10dp"
-                android:text="UploadFound"
+                android:text="捡  到  失  物"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                android:textStyle="bold"
                 android:textAllCaps="false" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2">
 
-        <TextView
-            android:id="@+id/show_location"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="当前位置信息" />
-    </LinearLayout>
 </LinearLayout>

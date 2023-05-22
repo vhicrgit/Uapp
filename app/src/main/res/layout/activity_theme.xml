@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/very_light_gray"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="20dp"
+            android:text="颜色主题设置"
+            android:textColor="@color/color_606060"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="93dp"
+            android:layout_marginLeft="0dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_white"
+                android:layout_width="80dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btn_white"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="70dp"
+                    android:layout_height="43dp"
+                    android:background="@drawable/rounded_background_white"
+                    android:scrollbars="vertical"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="18dp"
+                android:text="简洁白"
+                android:textColor="@color/black"
+                android:textStyle="normal"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="93dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_pink"
+                android:layout_width="80dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btn_pink"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="70dp"
+                    android:layout_height="43dp"
+                    android:background="@drawable/rounded_background_pink"
+                    android:scrollbars="vertical"
+                    android:textColor="#000000"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="18dp"
+                android:text="少女粉"
+                android:textColor="@color/black"
+                android:textStyle="normal"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="93dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_black"
+                android:layout_width="80dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btn_black"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="70dp"
+                    android:layout_height="43dp"
+                    android:background="@drawable/rounded_background_black"
+                    android:scrollbars="vertical"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="18dp"
+                android:text="主题黑"
+                android:textColor="@color/black"
+                android:textStyle="normal"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="93dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_red"
+                android:layout_width="80dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btn_red"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="70dp"
+                    android:layout_height="43dp"
+                    android:background="@drawable/rounded_background_red"
+                    android:scrollbars="vertical"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:padding="10dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="18dp"
+                android:text="高能红"
+                android:textColor="@color/black"
+                android:textStyle="normal"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_save"
+        style="@style/style_button"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/selector_btn_negative"
+        android:text="保存"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        />
+</LinearLayout>
