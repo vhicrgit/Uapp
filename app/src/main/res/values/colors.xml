@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="purple">#9b27b0</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -32,8 +33,9 @@
     <color name="yellow">#FFFF00</color>
     <color name="ancient_yellow">#eecd00</color>
     <color name="american_yellow">#f2b400</color>
-    <color name="barberry_yellow">#f3bd32</color>
+    <color name="barberry_yellow">#fec007</color>
     <color name="artful_pink">#cc6c82</color>
+    <color name="pink">#fa7298</color>
     <color name="orange">#FFA500</color>
     <color name="cyan">#00FFFF</color>
     <color name="gold">#FFD700</color>
@@ -44,7 +46,7 @@
     <color name="light_blue">#ADD8E6</color>
     <color name="blue">#0000FF</color>
     <color name="blue_2">#65CBFA</color>
-    <color name="green">#009688</color>
+    <color name="green">#8bc24b</color>
     <color name="green_2">#30f945</color>
     <color name="transparency">#00000000</color>
     <color name="red">#f44435</color>

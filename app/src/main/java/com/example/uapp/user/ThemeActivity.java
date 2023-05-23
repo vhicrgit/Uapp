@@ -37,10 +37,18 @@ public class ThemeActivity extends AppCompatActivity {
     private Button btn_black;
     private Button btn_pink;
     private Button btn_red;
+    private Button btn_yellow;
+    private Button btn_green;
+    private Button btn_blue;
+    private Button btn_purple;
     private LinearLayout ll_pink;
     private LinearLayout ll_white;
     private LinearLayout ll_black;
     private LinearLayout ll_red;
+    private LinearLayout ll_yellow;
+    private LinearLayout ll_green;
+    private LinearLayout ll_blue;
+    private LinearLayout ll_purple;
     private Toolbar toolbar;
 
     @Override
@@ -52,7 +60,7 @@ public class ThemeActivity extends AppCompatActivity {
         editor = getSharedPreferences("login_info",MODE_PRIVATE).edit();
         //导航栏及菜单
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("修改常用地址");
+        toolbar.setTitle("修改主题颜色");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
@@ -63,10 +71,18 @@ public class ThemeActivity extends AppCompatActivity {
         ll_white = findViewById(R.id.ll_white);
         ll_black = findViewById(R.id.ll_black);
         ll_red = findViewById(R.id.ll_red);
+        ll_yellow = findViewById(R.id.ll_yellow);
+        ll_green = findViewById(R.id.ll_green);
+        ll_blue = findViewById(R.id.ll_blue);
+        ll_purple = findViewById(R.id.ll_purple);
         btn_pink = findViewById(R.id.btn_pink);
         btn_red = findViewById(R.id.btn_red);
         btn_white = findViewById(R.id.btn_white);
         btn_black = findViewById(R.id.btn_black);
+        btn_yellow = findViewById(R.id.btn_yellow);
+        btn_green = findViewById(R.id.btn_green);
+        btn_blue = findViewById(R.id.btn_blue);
+        btn_purple = findViewById(R.id.btn_purple);
         //选择颜色
         btn_pink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +91,9 @@ public class ThemeActivity extends AppCompatActivity {
                 ll_white.setBackground(null);
                 ll_black.setBackground(null);
                 ll_red.setBackground(null);
+                downSetNull();
                 Config.themeColor = Config.themeColor_Pink;
+                Config.themeColor_Button = Config.themeColor_Button_Pink;
                 Config.themeColor_Text = Config.themeColor_Text_Pink;
                 saveAndSet();
             }
@@ -87,7 +105,9 @@ public class ThemeActivity extends AppCompatActivity {
                 ll_pink.setBackground(null);
                 ll_black.setBackground(null);
                 ll_red.setBackground(null);
+                downSetNull();
                 Config.themeColor = Config.themeColor_White;
+                Config.themeColor_Button = Config.themeColor_Button_White;
                 Config.themeColor_Text = Config.themeColor_Text_White;
                 saveAndSet();
             }
@@ -99,8 +119,10 @@ public class ThemeActivity extends AppCompatActivity {
                 ll_white.setBackground(null);
                 ll_pink.setBackground(null);
                 ll_red.setBackground(null);
-                Config.themeColor = Config.themeColor_Blue;
-                Config.themeColor_Text = Config.themeColor_Text_Blue;
+                downSetNull();
+                Config.themeColor = Config.themeColor_Black;
+                Config.themeColor_Button = Config.themeColor_Button_Black;
+                Config.themeColor_Text = Config.themeColor_Text_Black;
                 saveAndSet();
             }
         });
@@ -111,8 +133,66 @@ public class ThemeActivity extends AppCompatActivity {
                 ll_white.setBackground(null);
                 ll_black.setBackground(null);
                 ll_pink.setBackground(null);
+                downSetNull();
                 Config.themeColor = Config.themeColor_Red;
+                Config.themeColor_Button = Config.themeColor_Button_Red;
                 Config.themeColor_Text = Config.themeColor_Text_Red;
+                saveAndSet();
+            }
+        });
+        btn_yellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ll_yellow.setBackgroundResource(R.drawable.rounded_background_white);
+                ll_purple.setBackground(null);
+                ll_green.setBackground(null);
+                ll_blue.setBackground(null);
+                upSetNull();
+                Config.themeColor = Config.themeColor_Yellow;
+                Config.themeColor_Button = Config.themeColor_Button_Yellow;
+                Config.themeColor_Text = Config.themeColor_Text_Yellow;
+                saveAndSet();
+            }
+        });
+        btn_green.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ll_green.setBackgroundResource(R.drawable.rounded_background_white);
+                ll_yellow.setBackground(null);
+                ll_purple.setBackground(null);
+                ll_blue.setBackground(null);
+                upSetNull();
+                Config.themeColor = Config.themeColor_Green;
+                Config.themeColor_Button = Config.themeColor_Button_Green;
+                Config.themeColor_Text = Config.themeColor_Text_Green;
+                saveAndSet();
+            }
+        });
+        btn_blue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ll_blue.setBackgroundResource(R.drawable.rounded_background_white);
+                ll_yellow.setBackground(null);
+                ll_green.setBackground(null);
+                ll_purple.setBackground(null);
+                upSetNull();
+                Config.themeColor = Config.themeColor_Blue;
+                Config.themeColor_Button = Config.themeColor_Button_Blue;
+                Config.themeColor_Text = Config.themeColor_Text_Blue;
+                saveAndSet();
+            }
+        });
+        btn_purple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ll_purple.setBackgroundResource(R.drawable.rounded_background_white);
+                ll_yellow.setBackground(null);
+                ll_green.setBackground(null);
+                ll_blue.setBackground(null);
+                upSetNull();
+                Config.themeColor = Config.themeColor_Purple;
+                Config.themeColor_Button = Config.themeColor_Button_Purple;
+                Config.themeColor_Text = Config.themeColor_Text_Purple;
                 saveAndSet();
             }
         });
@@ -156,46 +236,12 @@ public class ThemeActivity extends AppCompatActivity {
     private void saveAndSet(){
         editor.putInt("themeColor",Config.themeColor);
         editor.putInt("themeColor_Text",Config.themeColor_Text);
+        editor.putInt("themeColor_Button",Config.themeColor_Button);
         editor.apply();
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
     }
-//    private class ChangePosTask extends AsyncTask<Void, Void, Boolean> {
-//        @Override
-//        protected Boolean doInBackground(Void... voids) {
-//            // 创建Item对象
-//            try {
-//                Boolean res;
-//                initializeUappServiceClient();
-//                SetUserInfo userInfo = new SetUserInfo();
-//                userInfo.setEmail(new_email);
-//                userInfo.setContact("");
-//                userInfo.setPassword("");
-//                SharedPreferences sno = getSharedPreferences("login_info", Context.MODE_PRIVATE);
-//                userInfo.setStudent_id(sno.getString("sno","null"));
-//                userInfo.setUsername("");
-//                userInfo.setWhich(3);
-//                res = UappServiceClient.setUserInfo(userInfo);
-//                return res;
-//            } catch (TException e) {
-//                e.printStackTrace();
-//                return false;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Boolean result){
-//            if(result){
-//                editor.putString("addr",new_addr);
-//                editor.apply();
-//                showMsg("新邮箱设置成功");
-//                finish();
-//            }
-//            else{
-//                showMsg("设置失败");
-//            }
-//        }
-//    }
+
     private void showMsg(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
@@ -203,5 +249,19 @@ public class ThemeActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {finish();}
         return super.onOptionsItemSelected(item);
+    }
+
+    private void upSetNull(){
+        ll_black.setBackground(null);
+        ll_white.setBackground(null);
+        ll_pink.setBackground(null);
+        ll_red.setBackground(null);
+    }
+
+    private void downSetNull(){
+        ll_yellow.setBackground(null);
+        ll_green.setBackground(null);
+        ll_blue.setBackground(null);
+        ll_purple.setBackground(null);
     }
 }

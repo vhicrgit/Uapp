@@ -199,6 +199,7 @@ public class MineFragment extends Fragment {
 
         //注销
         btn_log_out = view.findViewById(R.id.btn_logout);
+        btn_log_out.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -618,9 +619,16 @@ public class MineFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        tv_sno.setText(pref.getString("sno",""));
-        tv_username.setText(pref.getString("username",""));
+        loggedIn = pref.getBoolean("loggedIn",false);
+        if(loggedIn == false){
+            tv_username.setText("未登录");
+            tv_sno.setText("");
+        } else {
+            tv_username.setText(pref.getString("username","匿名"));
+            tv_sno.setText(pref.getString("sno",""));
+        }
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
+        btn_log_out.setBackground(getResources().getDrawable(Config.themeColor_Button));
     }
 }

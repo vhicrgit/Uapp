@@ -1,6 +1,7 @@
 package com.example.uapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,15 +10,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.thr.LoginInfo;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -33,8 +38,10 @@ import java.util.Arrays;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class LoginActivity extends AppCompatActivity {
+    private SharedPreferences pref;
     private String sno;
     private String username = "";
     private String contact = "";
@@ -66,6 +73,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //导航栏及菜单
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("登录");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
+        //控件初始化
         TextView tv_register = findViewById(R.id.tv_register);
         et_sno = findViewById(R.id.et_sno);
         et_passward = findViewById(R.id.et_passward);
@@ -80,6 +95,8 @@ public class LoginActivity extends AppCompatActivity {
            }
        });
         //点击登录按钮，将用户名和密码保存至“login_info.xml”文件中
+        btn_login.setBackground(getResources().getDrawable(Config.themeColor_Button));
+        btn_login.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +104,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
 
     private void initializeUappServiceClient() throws TException {
         // 创建TTransport对象

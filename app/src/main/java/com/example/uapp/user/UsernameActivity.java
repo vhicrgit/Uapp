@@ -69,6 +69,7 @@ public class UsernameActivity extends AppCompatActivity {
         et_username = findViewById(R.id.et_username);
         origin_username = pref.getString("username","");
         et_username.setText(origin_username);
+        btn_save.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

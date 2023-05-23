@@ -93,6 +93,7 @@ public class ChangePasswardActivity extends AppCompatActivity {
         editor = getSharedPreferences("login_info",MODE_PRIVATE).edit();
         //确认按钮
         btn_submit = findViewById(R.id.btn_submit);
+        btn_submit.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

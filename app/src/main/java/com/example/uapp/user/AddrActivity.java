@@ -66,6 +66,7 @@ public class AddrActivity extends AppCompatActivity {
         et_addr = findViewById(R.id.et_addr);
         origin_addr = pref.getString("addr","");
         et_addr.setText(origin_addr);
+        btn_save.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

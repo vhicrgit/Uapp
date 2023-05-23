@@ -1,25 +1,17 @@
 package com.example.uapp;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,12 +29,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.uapp.config.Config;
-import com.example.uapp.item.LostItem;
-import com.example.uapp.task.GetAddressTask;
-import com.example.uapp.task.util.DateUtil;
-import com.example.uapp.task.util.SocketUtil;
 import com.example.uapp.thr.PostInfo;
-import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
 import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
@@ -63,7 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,16 +58,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import io.socket.client.IO;
-import io.socket.client.Socket;
 
 public class PostFoundActivity extends AppCompatActivity {
     //*********** item数据相关 ************
@@ -196,6 +176,7 @@ public class PostFoundActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
+        btn_post.setBackground(getResources().getDrawable(Config.themeColor_Button));
 
         //自动设置时间
         java.util.Date currentDate = new java.util.Date();

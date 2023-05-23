@@ -141,7 +141,9 @@ public class PostLostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
-
+        btn_post.setBackgroundColor(getResources().getColor(Config.themeColor));
+        btn_post.setTextColor(getResources().getColor(Config.themeColor_Text));
+        btn_post.setBackground(getResources().getDrawable(Config.themeColor_Button));
 
         btn_img.setOnClickListener(new View.OnClickListener() {
             @Override

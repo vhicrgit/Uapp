@@ -66,6 +66,7 @@ public class EmailActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         origin_email = pref.getString("email","");
         et_email.setText(origin_email);
+        btn_save.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

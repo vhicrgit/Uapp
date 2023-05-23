@@ -1,17 +1,23 @@
 package com.example.uapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uapp.config.Config;
 import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -22,8 +28,10 @@ import org.apache.thrift.transport.TTransport;
 import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class RegisterActivity extends AppCompatActivity {
+    private SharedPreferences pref;
     private String sno;
     private String username;
     private String passward;
@@ -57,6 +65,13 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        //导航栏及菜单
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("注册");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
+        toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
 
         EditText et_sno = findViewById(R.id.et_sno);
         EditText et_username = findViewById(R.id.et_username);
@@ -64,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
         EditText et_confirm = findViewById(R.id.et_confirm);
         EditText et_email = findViewById(R.id.et_email);
         Button btn_register = findViewById(R.id.btn_register);
+        btn_register.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +109,24 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 //......
                 new RegisterTask().execute();
+            }
+        });
+    }
+
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }

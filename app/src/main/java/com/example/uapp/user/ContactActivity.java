@@ -82,6 +82,7 @@ public class ContactActivity extends AppCompatActivity {
         et_phone = findViewById(R.id.et_phone);
         cb_qq = findViewById(R.id.cb_qq);
         cb_phone = findViewById(R.id.cb_phone);
+        btn_save.setBackground(getResources().getDrawable(Config.themeColor_Button));
         //解析contact数据
         origin_contact = pref.getString("contact","");
         if(!origin_contact.equals("")){

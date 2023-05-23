@@ -148,33 +148,19 @@ android:layout_height="match_parent">
         stv:sLeftIconRes="@android:drawable/ic_menu_manage"
         stv:sRightIconRes="@drawable/ic_right_next" />
 
-
-    <RelativeLayout
+    <com.allen.library.SuperTextView
+        android:id="@+id/tv_version"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@color/white">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="版本："
-                android:textColor="@color/color_000000"
-                android:textSize="15sp"/>
-            <TextView
-                android:id="@+id/tv_profile_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="V1.0.0"
-                android:textColor="@color/color_000000"
-                android:textSize="15sp"/>
-        </LinearLayout>
-    </RelativeLayout>
+        stv:sLeftTextString="版本"
+        stv:sLeftTextSize="15sp"
+        stv:sLeftTextColor="@color/color_000000"
+        stv:sRightTextString="@string/version"
+        stv:sRightTextSize="17sp"
+        stv:sRightTextColor="@color/gray"
+        stv:sRightViewMarginRight="30dp"
+        stv:sLeftIconRes="@android:drawable/ic_menu_info_details" />
+
 
     <LinearLayout
         android:layout_width="match_parent"

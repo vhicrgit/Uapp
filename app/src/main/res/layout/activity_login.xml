@@ -2,29 +2,29 @@
 <!--登录界面,用LinearLayout-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/blue_paper"
     android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp">
 
-        <ImageView
-            android:id="@+id/symbol"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
         <TextView
             android:layout_marginLeft="20dp"
             android:id="@+id/qq"
             android:layout_width="wrap_content"
-            android:layout_marginTop="35dp"
             android:text="失物招领APP"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -37,7 +37,7 @@
         android:layout_marginTop="60dp"
         android:hint="学号"
         android:textSize="20sp"
-        android:textColorHint="@color/white">
+        android:textColorHint="@color/dark_gray">
         <!--输入框-->
         <EditText
             android:id="@+id/et_sno"
@@ -47,7 +47,7 @@
             android:paddingLeft="10dp"
             android:textSize="20sp"
             android:theme="@style/MyEditText"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,14 +59,14 @@
         android:layout_marginTop="10dp"
         android:hint="密码"
         android:textSize="20sp"
-        android:textColorHint="@color/white">
+        android:textColorHint="@color/dark_gray">
         <!--输入框-->
         <EditText
             android:id="@+id/et_passward"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:paddingLeft="10dp"
             android:theme="@style/MyEditText"
             android:textSize="20sp"
@@ -76,13 +76,12 @@
     <Button
         android:id="@+id/btn_login"
         android:text="登录"
-        android:background="#1E90FF"
-        android:textSize="24sp"
-        android:textColor="@color/white"
-        android:layout_gravity="center"
+        style="@style/style_button"
         android:layout_marginTop="20dp"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"/>
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/selector_btn_negative"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"/>
 
     <RelativeLayout
         android:layout_marginTop="15dp"
@@ -92,7 +91,7 @@
             android:id="@+id/tv_register"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="新用户注册"/>
@@ -101,7 +100,7 @@
             android:id="@+id/tv_find_psw"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="40dp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="忘记密码？" />
@@ -117,7 +116,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

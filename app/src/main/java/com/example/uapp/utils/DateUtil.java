@@ -1,4 +1,4 @@
-package com.example.uapp.task.util;
+package com.example.uapp.utils;
 
 import android.annotation.SuppressLint;
 
