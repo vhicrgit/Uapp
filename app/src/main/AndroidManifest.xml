@@ -47,6 +47,15 @@
             android:name=".PostFoundActivity"
             android:exported="false" />
         <activity
+            android:name=".PostHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PostHistoryLostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PostHistoryFoundActivity"
+            android:exported="false" />
+        <activity
             android:name=".LostItemDetailActivity"
             android:exported="false" />
         <activity

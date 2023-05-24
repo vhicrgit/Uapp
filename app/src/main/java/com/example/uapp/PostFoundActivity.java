@@ -79,6 +79,7 @@ public class PostFoundActivity extends AppCompatActivity {
     private String thumbnailPath;
     private String imgPath = null;
     private String imgName = null;
+    private String contact;
     //*********** 照片相关 ************
     //权限请求
     private RxPermissions rxPermissions;
@@ -121,6 +122,11 @@ public class PostFoundActivity extends AppCompatActivity {
         TProtocol protocol = new TBinaryProtocol(transport);
         UappServiceClient = new UappService.Client(protocol);
         transport.open();
+    }
+    private void closeItemServiceClient() {
+        if (UappServiceClient != null) {
+            UappServiceClient.getInputProtocol().getTransport().close();
+        }
     }
 
 
@@ -225,7 +231,7 @@ public class PostFoundActivity extends AppCompatActivity {
                     posterId = pref.getString("sno", "匿名");
                     //物品名
                     if (TextUtils.isEmpty(et_item_name.getText().toString())) {
-                        Toast.makeText(PostFoundActivity.this, "丢失物品名不能为空！",
+                        Toast.makeText(PostFoundActivity.this, "物品名不能为空！",
                                 Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -233,7 +239,7 @@ public class PostFoundActivity extends AppCompatActivity {
                     }
                     //地点
                     if (TextUtils.isEmpty(et_pos.getText().toString())) {
-                        Toast.makeText(PostFoundActivity.this, "丢失地点不能为空！",
+                        Toast.makeText(PostFoundActivity.this, "放置地点不能为空！",
                                 Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -258,7 +264,8 @@ public class PostFoundActivity extends AppCompatActivity {
                     //上传时间
                     postTime = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
                     //state
-                    state = false;
+                    state = true;
+                    contact = pref.getString("contact","");
 
 
 //                    //设置数据，存入数据库
@@ -326,6 +333,7 @@ public class PostFoundActivity extends AppCompatActivity {
                 lostItemInfo.setLost_time(lostTime.getTime());
                 lostItemInfo.setImage_name(imgName);
                 lostItemInfo.setPost_id(timeStampFormat.format(postTime) + posterId);
+                lostItemInfo.setContact(contact);
 
                 Log.d("=== itemName ===", itemName);
                 Log.d("=== posterId ===", posterId);
@@ -333,6 +341,7 @@ public class PostFoundActivity extends AppCompatActivity {
                 Log.d("=== postTime ===", postTime.toString());
                 Log.d("=== lostTime ===", lostTime.toString());
                 Log.d("=== imgName ===", imgName);
+                Log.d("=== contact ===", contact);
 //                Log.d("=== postId ===", postId);
                 // 读取完整图片
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -366,6 +375,7 @@ public class PostFoundActivity extends AppCompatActivity {
                 Toast.makeText(PostFoundActivity.this, "上传失败",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
 
@@ -387,14 +397,14 @@ public class PostFoundActivity extends AppCompatActivity {
                     .subscribe(granted -> {
                         if (granted) {//申请成功
                             hasPermissions = true;
-                            showMsg("已获取权限");
+//                            showMsg("已获取权限");
                         } else {//申请失败
                             showMsg("权限未开启");
                         }
                     });
         } else {
             //Android6.0以下
-            showMsg("无需请求动态权限");
+//            showMsg("无需请求动态权限");
         }
     }
 

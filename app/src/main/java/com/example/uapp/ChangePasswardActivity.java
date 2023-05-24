@@ -72,6 +72,11 @@ public class ChangePasswardActivity extends AppCompatActivity {
         UappServiceClient = new UappService.Client(protocol);
         transport.open();
     }
+    private void closeItemServiceClient() {
+        if (UappServiceClient != null) {
+            UappServiceClient.getInputProtocol().getTransport().close();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +207,7 @@ public class ChangePasswardActivity extends AppCompatActivity {
             else{
                 showMsg("新密码设置失败");
             }
+            closeItemServiceClient();
         }
     }
 

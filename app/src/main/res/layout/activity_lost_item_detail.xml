@@ -150,7 +150,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
+        <Button
+            android:id="@+id/btn_submit"
+            style="@style/style_button"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/selector_btn_negative"
+            android:text="物品已找回？"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            />
     </androidx.cardview.widget.CardView>
 </LinearLayout>
 </ScrollView>

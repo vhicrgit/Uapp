@@ -48,6 +48,7 @@ import com.example.uapp.thr.RegisterInfo;
 import com.example.uapp.thr.SetUserInfo;
 import com.example.uapp.thr.UappService;
 import com.example.uapp.user.AddrActivity;
+import com.example.uapp.user.UsernameActivity;
 import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.BitmapUtils;
 import com.example.uapp.utils.CameraUtils;
@@ -240,32 +241,8 @@ public class MineFragment extends Fragment {
         });
         //关怀模式
         switchCompat = view.findViewById(R.id.modeSwitch);
-//        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {// 启用关怀模式
-//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
-//                    editor.putBoolean("careMode",true);
-//                    editor.apply();
-//                    AppearanceUtils.increaseFontSize(view,1.25f);
-//                } else {// 关闭关怀模式
-//                    editor = getActivity().getSharedPreferences("login_info",Context.MODE_PRIVATE).edit();
-//                    editor.putBoolean("careMode",false);
-//                    editor.apply();
-//                    AppearanceUtils.increaseFontSize(view,0.8f);
-//                }
-//            }
-//        });
-//        if(pref.getBoolean("careMOde",false)){
-//            //关怀模式
-//            AppearanceUtils.increaseFontSize(view,1.25f);
-//        }
-
-        //个人信息
-        //TODO
 
         //常用位置
-        //TODO
         tv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -273,7 +250,14 @@ public class MineFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        //发帖记录
+        tv_post_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PostHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -336,8 +320,6 @@ public class MineFragment extends Fragment {
     }
 
 
-
-
     private void showMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
@@ -353,14 +335,14 @@ public class MineFragment extends Fragment {
                     .subscribe(granted -> {
                         if (granted) {//申请成功
                             hasPermissions = true;
-                            showMsg("已获取权限");
+//                            showMsg("已获取权限");
                         } else {//申请失败
                             showMsg("权限未开启");
                         }
                     });
         } else {
             //Android6.0以下
-            showMsg("无需请求动态权限");
+//            showMsg("无需请求动态权限");
         }
     }
 
@@ -567,6 +549,7 @@ public class MineFragment extends Fragment {
                 Toast.makeText(getActivity(),"头像设置失败",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
     private void showConfirmationDialog() {

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.camera2.params.BlackLevelPattern;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,17 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.uapp.config.Config;
 import com.example.uapp.item.LostItem;
 import com.example.uapp.item.LostItemAdapter;
 import com.example.uapp.thr.AbbrInfo;
-import com.example.uapp.thr.PostInfo;
 import com.example.uapp.thr.UappService;
 import com.example.uapp.utils.AppearanceUtils;
 
@@ -41,16 +37,10 @@ import org.litepal.LitePal;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,7 +51,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class FoundFragment extends Fragment {
+public class PostHistoryFoundActivity extends AppCompatActivity {
     private List<LostItem> lostItemList = new ArrayList<>();
     private androidx.appcompat.widget.SearchView searchView;
     private String searchText;
@@ -70,6 +60,7 @@ public class FoundFragment extends Fragment {
     private Boolean onSearch = false;//表示当前是否在搜索中
     private long debug_lost_time;
     private long debug_post_time;
+    private String sno;
     private SharedPreferences pref;
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -93,16 +84,20 @@ public class FoundFragment extends Fragment {
     }
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_found, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_found);
         //导航栏及菜单
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        AppCompatActivity activity = this;
         activity.setSupportActionBar(toolbar);
-        toolbar.setTitle("失物招领列表");
+        toolbar.setTitle("'失物招领'发帖记录");
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
-        requireActivity().addMenuProvider(new MenuProvider() {
+        //获取个人信息
+        pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+        sno = pref.getString("sno","");
+        addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.lost_menu, menu);
@@ -132,19 +127,19 @@ public class FoundFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 onSearch = false;
-                new FoundFragment.getPostTask().execute();
+                new PostHistoryFoundActivity.getPostTask().execute();
                 return true;
             }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+        });
 
 
         // 设置下拉刷新的监听器
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 lostItemList.clear();
-                new FoundFragment.getPostTask().execute();
+                new PostHistoryFoundActivity.getPostTask().execute();
 //                swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -154,16 +149,16 @@ public class FoundFragment extends Fragment {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        LostItemAdapter adapter = new LostItemAdapter(getActivity(),
+        LostItemAdapter adapter = new LostItemAdapter(PostHistoryFoundActivity.this,
                 R.layout.lost_item,lostItemList);
-        ListView listview = view.findViewById(R.id.listview);
+        ListView listview = findViewById(R.id.listview);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 处理ListView的点击事件
                 // position 是所选中的项目在ListView中的位置
-                Intent intent = new Intent(getActivity(), FoundItemDetailActivity.class);
+                Intent intent = new Intent(PostHistoryFoundActivity.this, FoundItemDetailActivity.class);
                 // 添加要传递的数据
                 LostItem lostItem = lostItemList.get(position);
                 intent.putExtra("itemName", lostItem.getName());
@@ -184,13 +179,13 @@ public class FoundFragment extends Fragment {
 
 
         // *********** 翻页 *************
-        Button btn_next = view.findViewById(R.id.btn_next);
-        Button btn_prev = view.findViewById(R.id.btn_prev);
+        Button btn_next = findViewById(R.id.btn_next);
+        Button btn_prev = findViewById(R.id.btn_prev);
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(lastPostId.isEmpty()){
-                    Toast.makeText(getActivity(),"无法翻页！",Toast.LENGTH_SHORT).show();
+                    showMsg("无法翻页！");
                 }else {
                     new turnPageTask().execute(true);
                 }
@@ -200,14 +195,13 @@ public class FoundFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(firstPostId.isEmpty()){
-                    Toast.makeText(getActivity(),"无法翻页！",Toast.LENGTH_SHORT).show();
+                    showMsg("无法翻页！");
                 }else {
                     new turnPageTask().execute(false);
                 }
             }
         });
 
-        return view;
     }
 
     private void initLostItem() throws ParseException {
@@ -230,18 +224,18 @@ public class FoundFragment extends Fragment {
             // 创建Item对象
             try {
                 initializeUappServiceClient();
-                List<AbbrInfo> AbbrInfos = UappServiceClient.getPostBy10(false);
+                List<AbbrInfo> AbbrInfos = UappServiceClient.historyNext10(searchText,"",false,false,sno);
                 for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
                     String imageName = abbrInfo.getImage_name();
-                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    File file_full = new File(getFilesDir(), imageName);
                     // 去掉文件后缀
                     int dotIndex = imageName.lastIndexOf(".");
                     if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
                         imageName = imageName.substring(0, dotIndex);
                     }
                     imageName = imageName + "_thumbnail.jpg";
-                    File file = new File(getContext().getFilesDir(), imageName);
+                    File file = new File(getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
                             byte [] image = abbrInfo.getThumbnail();
@@ -285,9 +279,9 @@ public class FoundFragment extends Fragment {
         protected void onPostExecute(Boolean result){
             if(result){
                 //重新载入lostItemList
-                LostItemAdapter adapter = new LostItemAdapter(getActivity(),
+                LostItemAdapter adapter = new LostItemAdapter(PostHistoryFoundActivity.this,
                         R.layout.lost_item,lostItemList);
-                ListView listview = getView().findViewById(R.id.listview);
+                ListView listview = findViewById(R.id.listview);
                 listview.setAdapter(adapter);
                 //获取首尾帖子id
                 if (lostItemList == null || lostItemList.isEmpty()) {
@@ -298,14 +292,12 @@ public class FoundFragment extends Fragment {
                     firstPostId = lostItemList.get(0).getPostId();
                     lastPostId = lostItemList.get(lostItemList.size() - 1).getPostId();
                 }
-                Toast.makeText(getActivity(),"刷新成功！",
-                        Toast.LENGTH_SHORT).show();
+                showMsg("刷新成功");
                 Log.d("========== debug_lost_time ==========", Long.toString(debug_lost_time));
                 Log.d("========== debug_post_time ==========", Long.toString(debug_post_time));
             }
             else{
-                Toast.makeText(getActivity(),"刷新失败",
-                        Toast.LENGTH_SHORT).show();
+                showMsg("刷新失败");
             }
             closeItemServiceClient();
             swipeRefreshLayout.setRefreshing(false);
@@ -319,19 +311,19 @@ public class FoundFragment extends Fragment {
             // 创建Item对象
             try {
                 initializeUappServiceClient();
-                List<AbbrInfo> AbbrInfos = UappServiceClient.searchNext10(searchText,"",true,false);
+                List<AbbrInfo> AbbrInfos = UappServiceClient.historyNext10(searchText,"",true,false,sno);
                 Log.d("=======debug_AbbrInfos=======", " "+AbbrInfos.size());
                 for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
                     String imageName = abbrInfo.getImage_name();
-                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    File file_full = new File(getFilesDir(), imageName);
                     // 去掉文件后缀
                     int dotIndex = imageName.lastIndexOf(".");
                     if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
                         imageName = imageName.substring(0, dotIndex);
                     }
                     imageName = imageName + "_thumbnail.jpg";
-                    File file = new File(getContext().getFilesDir(), imageName);
+                    File file = new File(getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
                             byte [] image = abbrInfo.getThumbnail();
@@ -377,9 +369,9 @@ public class FoundFragment extends Fragment {
         protected void onPostExecute(Boolean result){
             if(result){
                 //重新载入lostItemList
-                LostItemAdapter adapter = new LostItemAdapter(getActivity(),
+                LostItemAdapter adapter = new LostItemAdapter(PostHistoryFoundActivity.this,
                         R.layout.lost_item,lostItemList);
-                ListView listview = getView().findViewById(R.id.listview);
+                ListView listview = findViewById(R.id.listview);
                 listview.setAdapter(adapter);
                 if (lostItemList == null || lostItemList.isEmpty()) {
                     // List<AbbrInfo> AbbrInfos 为空
@@ -391,12 +383,10 @@ public class FoundFragment extends Fragment {
                 }
                 //设置搜索状态
                 onSearch = true;
-                Toast.makeText(getActivity(),"搜索成功！",
-                        Toast.LENGTH_SHORT).show();
+                showMsg("搜索成功");
             }
             else{
-                Toast.makeText(getActivity(),"搜索失败",
-                        Toast.LENGTH_SHORT).show();
+                showMsg("搜索失败");
             }
             closeItemServiceClient();
         }
@@ -412,10 +402,10 @@ public class FoundFragment extends Fragment {
                 initializeUappServiceClient();
                 List<AbbrInfo> AbbrInfos;
                 if(isNext){//NextPage
-                    AbbrInfos = UappServiceClient.searchNext10(searchText,lastPostId,onSearch, false);
+                    AbbrInfos = UappServiceClient.historyNext10(searchText,lastPostId,onSearch, false,sno);
                 }
                 else{//PrevPage
-                    AbbrInfos = UappServiceClient.searchPrev10(searchText,firstPostId,onSearch,false);
+                    AbbrInfos = UappServiceClient.historyPrev10(searchText,firstPostId,onSearch,false,sno);
                 }
                 Log.d("=======debug_AbbrInfos=======", " "+AbbrInfos.size());
                 if (AbbrInfos == null || AbbrInfos.isEmpty()) {
@@ -428,14 +418,14 @@ public class FoundFragment extends Fragment {
                 for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
                     String imageName = abbrInfo.getImage_name();
-                    File file_full = new File(getContext().getFilesDir(), imageName);
+                    File file_full = new File(getFilesDir(), imageName);
                     // 去掉文件后缀
                     int dotIndex = imageName.lastIndexOf(".");
                     if (dotIndex > 0 && dotIndex < imageName.length() - 1) {
                         imageName = imageName.substring(0, dotIndex);
                     }
                     imageName = imageName + "_thumbnail.jpg";
-                    File file = new File(getContext().getFilesDir(), imageName);
+                    File file = new File(getFilesDir(), imageName);
                     if (!file.exists()) {
                         try {
                             byte [] image = abbrInfo.getThumbnail();
@@ -481,9 +471,9 @@ public class FoundFragment extends Fragment {
         protected void onPostExecute(Boolean result){
             if(result){
                 //重新载入lostItemList
-                LostItemAdapter adapter = new LostItemAdapter(getActivity(),
+                LostItemAdapter adapter = new LostItemAdapter(PostHistoryFoundActivity.this,
                         R.layout.lost_item,lostItemList);
-                ListView listview = getView().findViewById(R.id.listview);
+                ListView listview = findViewById(R.id.listview);
                 listview.setAdapter(adapter);
                 //获取首尾帖子id
                 if(lostItemList.isEmpty()){
@@ -495,31 +485,35 @@ public class FoundFragment extends Fragment {
                 }
                 //设置搜索状态
 //                onSearch = true;
-                Toast.makeText(getActivity(),"翻页成功！",Toast.LENGTH_SHORT).show();
+                showMsg("翻页成功");
             }
             else{
-                Toast.makeText(getActivity(),"当前页面无法翻页",Toast.LENGTH_SHORT).show();
+                showMsg("当前页面无法翻页");
 //                Log.d("=======debug_page=======", " "+);
             }
             closeItemServiceClient();
         }
     }
 
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ViewTreeObserver observer = getView().getViewTreeObserver();
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                pref = getActivity().getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
                 if(pref.getBoolean("careMode",false)){
                     //关怀模式
-                    AppearanceUtils.increaseFontSize(getView(),1.25f);
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
                 }
                 // 移除监听器，避免重复回调
-                getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
 
+    private void showMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 }

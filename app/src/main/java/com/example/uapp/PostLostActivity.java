@@ -80,6 +80,7 @@ public class PostLostActivity extends AppCompatActivity {
     private String thumbnailPath;
     private String imgPath = null;
     private String imgName = null;
+    private String contact;
     //*********** 照片相关 ************
     //权限请求
     private RxPermissions rxPermissions;
@@ -141,8 +142,6 @@ public class PostLostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
-        btn_post.setBackgroundColor(getResources().getColor(Config.themeColor));
-        btn_post.setTextColor(getResources().getColor(Config.themeColor_Text));
         btn_post.setBackground(getResources().getDrawable(Config.themeColor_Button));
 
         btn_img.setOnClickListener(new View.OnClickListener() {
@@ -199,8 +198,8 @@ public class PostLostActivity extends AppCompatActivity {
                     //上传时间
                     postTime = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
                     //state
-                    state = false;
-
+                    state = true;
+                    contact = pref.getString("contact","");
 
 //                    //设置数据，存入数据库
 //                    LostItem lostItem = new LostItem(itemName,imgPath,postTime,pos);
@@ -267,6 +266,7 @@ public class PostLostActivity extends AppCompatActivity {
                 lostItemInfo.setLost_time(lostTime.getTime());
                 lostItemInfo.setImage_name(imgName);
                 lostItemInfo.setPost_id(timeStampFormat.format(postTime)+posterId);
+                lostItemInfo.setContact(contact);
 
                 Log.d("=== itemName ===", itemName);
                 Log.d("=== posterId ===", posterId);
@@ -274,6 +274,7 @@ public class PostLostActivity extends AppCompatActivity {
                 Log.d("=== postTime ===", postTime.toString());
                 Log.d("=== lostTime ===", lostTime.toString());
                 Log.d("=== imgName ===", imgName);
+                Log.d("=== contact ===", contact);
 //                Log.d("=== postId ===", postId);
                 // 读取完整图片
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -308,6 +309,7 @@ public class PostLostActivity extends AppCompatActivity {
                 Toast.makeText(PostLostActivity.this,"上传失败",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
 
@@ -330,14 +332,14 @@ public class PostLostActivity extends AppCompatActivity {
                     .subscribe(granted -> {
                         if (granted) {//申请成功
                             hasPermissions = true;
-                            showMsg("已获取权限");
+//                            showMsg("已获取权限");
                         } else {//申请失败
                             showMsg("权限未开启");
                         }
                     });
         } else {
             //Android6.0以下
-            showMsg("无需请求动态权限");
+//            showMsg("无需请求动态权限");
         }
     }
 

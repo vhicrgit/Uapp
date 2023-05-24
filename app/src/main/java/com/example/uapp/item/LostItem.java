@@ -37,6 +37,7 @@ public class LostItem extends LitePalSupport implements Serializable {
     private boolean state;//是否找回
     private String imagePath;//图片存放路径
     private String thumbnailPath;//缩略图路径
+    private String contact;//联系方式
 
     public LostItem(String name,int imageId,Date lostTime,String pos){
         this.name = name;
@@ -53,7 +54,7 @@ public class LostItem extends LitePalSupport implements Serializable {
     }
 
     public LostItem(String name, String imagePath,Date lostTime,String pos,String posterId,
-                    Date postTime, boolean state, String postId ,String desc){
+                    Date postTime, boolean state, String postId ,String desc, String contact){
         this.name = name;
         this.lostTime = lostTime;
         this.pos = pos;
@@ -63,6 +64,7 @@ public class LostItem extends LitePalSupport implements Serializable {
         this.state = state;
         this.postId = postId;
         this.desc = desc;
+        this.contact = contact;
 
         File file = new File(imagePath);
         String parentPath = file.getParent();
@@ -152,6 +154,9 @@ public class LostItem extends LitePalSupport implements Serializable {
     public String getPostId(){return this.postId;}
 
     public String getThumbnailPath(){return this.thumbnailPath;}
+
+    public String getContact(){return this.contact;}
+    public void setContact(String contact){this.contact = contact;}
 }
 
 

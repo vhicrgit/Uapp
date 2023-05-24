@@ -134,6 +134,11 @@ public class LoginActivity extends AppCompatActivity {
         // 打开transport
         transport.open();
     }
+    private void closeItemServiceClient() {
+        if (UappServiceClient != null) {
+            UappServiceClient.getInputProtocol().getTransport().close();
+        }
+    }
 
     private class LoginTask extends AsyncTask<Void, Void, Boolean> {
         @Override
@@ -207,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this,"密码错误或学号不存在",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
 

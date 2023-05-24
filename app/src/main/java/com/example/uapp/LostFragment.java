@@ -170,6 +170,9 @@ public class LostFragment extends Fragment {
                 intent.putExtra("contact", lostItem.getPosterId());
                 intent.putExtra("description", lostItem.getDesc());
                 intent.putExtra("imagePath", lostItem.getImagePath());
+                intent.putExtra("sno", lostItem.getPosterId());
+                intent.putExtra("contact", lostItem.getContact());
+                intent.putExtra("status", lostItem.getState());
                 // 启动活动
                 startActivity(intent);
             }
@@ -228,6 +231,7 @@ public class LostFragment extends Fragment {
             try {
                 initializeUappServiceClient();
                 List<AbbrInfo> AbbrInfos = UappServiceClient.getPostBy10(true);
+                Log.d("========== debug_AbbrInfos_size ==========", String.valueOf(AbbrInfos.size()));
                 for(AbbrInfo abbrInfo:AbbrInfos){
                     //判断图片是否存在,若不存在,则创建图片
                     String imageName = abbrInfo.getImage_name();
@@ -242,6 +246,8 @@ public class LostFragment extends Fragment {
                     if (!file.exists()) {
                         try {
                             byte [] image = abbrInfo.getThumbnail();
+
+                            Log.d("========== debug_image ==========", image.toString());
                             // 将 byte[] 数据转换为 Bitmap
                             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                             // 将 Bitmap 保存为文件
@@ -265,8 +271,13 @@ public class LostFragment extends Fragment {
                             post_time,
                             abbrInfo.isStatus(),
                             abbrInfo.getPost_id(),
-                            abbrInfo.getItem_desc());
+                            abbrInfo.getItem_desc(),
+                            abbrInfo.getContact()
+                    );
                     lostItemList.add(lostItem);
+                    Log.d("========== debug_item_type ==========", abbrInfo.getItem_type());
+                    Log.d("========== debug_item_id ==========", abbrInfo.getPost_id());
+
                 }
 
             } catch (TException e) {
@@ -302,6 +313,7 @@ public class LostFragment extends Fragment {
                 Toast.makeText(getActivity(),"刷新失败",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
             swipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -352,7 +364,9 @@ public class LostFragment extends Fragment {
                             post_time,
                             abbrInfo.isStatus(),
                             abbrInfo.getPost_id(),
-                            abbrInfo.getItem_desc());
+                            abbrInfo.getItem_desc(),
+                            abbrInfo.getContact()
+                    );
                     lostItemList.add(lostItem);
                     Log.d("=======debug_add(lostItem)=======", " "+file_full.getPath());
                     Log.d("=======debug_add(lostItem)=======", " "+abbrInfo.getItem_type());
@@ -390,6 +404,7 @@ public class LostFragment extends Fragment {
                 Toast.makeText(getActivity(),"搜索失败",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
 
@@ -453,7 +468,9 @@ public class LostFragment extends Fragment {
                             post_time,
                             abbrInfo.isStatus(),
                             abbrInfo.getPost_id(),
-                            abbrInfo.getItem_desc());
+                            abbrInfo.getItem_desc(),
+                            abbrInfo.getContact()
+                            );
                     lostItemList.add(lostItem);
                     Log.d("=======debug_add(lostItem)=======", " "+file_full.getPath());
                     Log.d("=======debug_add(lostItem)=======", " "+abbrInfo.getItem_type());
@@ -490,6 +507,7 @@ public class LostFragment extends Fragment {
                 Toast.makeText(getActivity(),"当前页面无法翻页",Toast.LENGTH_SHORT).show();
 //                Log.d("=======debug_page=======", " "+);
             }
+            closeItemServiceClient();
         }
     }
 

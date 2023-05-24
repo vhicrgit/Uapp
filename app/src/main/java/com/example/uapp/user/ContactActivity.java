@@ -13,6 +13,8 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import com.example.uapp.R;
 import com.example.uapp.config.Config;
 import com.example.uapp.thr.SetUserInfo;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 import com.example.uapp.utils.String2HashMap;
 
 import org.apache.thrift.TException;
@@ -61,6 +64,11 @@ public class ContactActivity extends AppCompatActivity {
         TProtocol protocol = new TBinaryProtocol(transport);
         UappServiceClient = new UappService.Client(protocol);
         transport.open();
+    }
+    private void closeItemServiceClient() {
+        if (UappServiceClient != null) {
+            UappServiceClient.getInputProtocol().getTransport().close();
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +206,7 @@ public class ContactActivity extends AppCompatActivity {
             else{
                 showMsg("设置失败");
             }
+            closeItemServiceClient();
         }
     }
 
@@ -210,5 +219,23 @@ public class ContactActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {finish();}
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.example.uapp.user;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +12,8 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 import com.example.uapp.R;
 import com.example.uapp.config.Config;
 import com.example.uapp.thr.UappService;
+import com.example.uapp.utils.AppearanceUtils;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -263,5 +267,23 @@ public class ThemeActivity extends AppCompatActivity {
         ll_green.setBackground(null);
         ll_blue.setBackground(null);
         ll_purple.setBackground(null);
+    }
+
+    protected void onStart() {
+        super.onStart();
+        ViewGroup rootView = findViewById(android.R.id.content);
+        ViewTreeObserver observer = rootView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
+                if(pref.getBoolean("careMode",false)){
+                    //关怀模式
+                    AppearanceUtils.increaseFontSize(rootView,1.25f);
+                }
+                // 移除监听器，避免重复回调
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 }

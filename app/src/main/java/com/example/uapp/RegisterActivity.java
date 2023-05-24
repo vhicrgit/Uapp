@@ -169,6 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this,"该学号已被注册",
                         Toast.LENGTH_SHORT).show();
             }
+            closeItemServiceClient();
         }
     }
     private void showMsg(String msg) {
