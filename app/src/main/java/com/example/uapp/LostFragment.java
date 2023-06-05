@@ -130,6 +130,7 @@ public class LostFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 onSearch = false;
+                lostItemList.clear();
                 new LostFragment.getPostTask().execute();
                 return true;
             }

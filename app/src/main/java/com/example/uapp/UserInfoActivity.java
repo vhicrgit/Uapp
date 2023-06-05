@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -17,6 +18,8 @@ import com.example.uapp.user.ContactActivity;
 import com.example.uapp.user.EmailActivity;
 import com.example.uapp.user.UsernameActivity;
 import com.example.uapp.utils.AppearanceUtils;
+
+import java.util.Objects;
 
 public class UserInfoActivity extends AppCompatActivity {
     private SharedPreferences pref;
@@ -34,7 +37,8 @@ public class UserInfoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("用户信息");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//添加默认的返回图标
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
         toolbar.setBackgroundColor(getResources().getColor(Config.themeColor));
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
         //控件初始化
@@ -94,5 +98,13 @@ public class UserInfoActivity extends AppCompatActivity {
                 rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

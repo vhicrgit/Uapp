@@ -17,6 +17,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -122,6 +123,7 @@ public class LostItemDetailActivity extends AppCompatActivity {
         poster_sno = intent.getStringExtra("sno");
         Status = intent.getBooleanExtra("status",false);
 
+        contact_ = contact_.replace(",", "\n");
         itemName.setText(item_name);
         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月dd日");
         String formattedDate1 = dateFormat1.format(new Date(lost_time));
@@ -290,5 +292,13 @@ public class LostItemDetailActivity extends AppCompatActivity {
             }
             closeItemServiceClient();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -159,6 +159,7 @@ public class PostFoundActivity extends AppCompatActivity {
 //        }
 //    };
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_found);
@@ -191,7 +192,6 @@ public class PostFoundActivity extends AppCompatActivity {
         et_lost_time.setText(formattedDate);
 
         //设置常用地点
-        //TODO
         String commonAddr = pref.getString("addr","");
         cb_addr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -205,6 +205,7 @@ public class PostFoundActivity extends AppCompatActivity {
                 }
             }
         });
+        cb_addr.setChecked(true);
 
 
         btn_img.setOnClickListener(new View.OnClickListener() {

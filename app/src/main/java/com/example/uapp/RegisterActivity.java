@@ -98,14 +98,17 @@ public class RegisterActivity extends AppCompatActivity {
                 //检测密码是否过短
                 if(passward.length() < 6){
                     showMsg("密码长度应不少于6位");
+                    return;
                 }
                 //检测用户名是否过短
                 if(username.length() < 4){
                     showMsg("用户名过短");
+                    return;
                 }
                 //检测学号是否过短
                 if(sno.length() < 4){
-                    showMsg("学号错误");
+                    showMsg("学号/工号错误");
+                    return;
                 }
                 //......
                 new RegisterTask().execute();

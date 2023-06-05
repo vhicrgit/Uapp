@@ -182,18 +182,18 @@ android:layout_height="match_parent">
     </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/gray_headshot"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="80dp"
-        android:src="@drawable/gray_headshot" />
+<!--    <ImageView-->
+<!--        android:id="@+id/gray_headshot"-->
+<!--        android:layout_width="45dp"-->
+<!--        android:layout_height="45dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginStart="80dp"-->
+<!--        android:src="@drawable/gray_headshot" />-->
 
     <Button
         android:id="@+id/btn_logout"
         style="@style/style_button"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/selector_btn_negative"
         android:text="注销"

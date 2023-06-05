@@ -68,7 +68,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:background="@drawable/prev_page" />
+                android:background="@drawable/prev_page"
+                android:color="@color/very_light_gray"/>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -76,7 +77,8 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             app:cardCornerRadius="18dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            android:background="@color/gray">
             <Button
                 android:id="@+id/btn_next"
                 android:layout_width="30dp"

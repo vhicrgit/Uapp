@@ -149,7 +149,7 @@ public class MineFragment extends Fragment {
         else{
             return view;
         }
-        ImageView headShot = view.findViewById(R.id.gray_headshot);
+//        ImageView headShot = view.findViewById(R.id.gray_headshot);
         tv_change_passward = view.findViewById(R.id.tv_change_passward);
         tv_user_info = view.findViewById(R.id.tv_user_info);
         tv_post_history = view.findViewById(R.id.tv_post_history);
@@ -166,13 +166,13 @@ public class MineFragment extends Fragment {
             tv_username.setText(pref.getString("username","匿名"));
             tv_sno.setText(pref.getString("sno",""));
         }
-        headShot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent, LOG_IN);
-            }
-        });
+//        headShot.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getActivity(), LoginActivity.class);
+//                startActivityForResult(intent, LOG_IN);
+//            }
+//        });
 
         //头像
         ivHead = view.findViewById(R.id.iv_head);

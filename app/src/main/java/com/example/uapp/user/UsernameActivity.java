@@ -173,6 +173,7 @@ public class UsernameActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     protected void onStart() {
         super.onStart();
         ViewGroup rootView = findViewById(android.R.id.content);
