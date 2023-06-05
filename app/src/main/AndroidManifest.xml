@@ -19,6 +19,7 @@
         <activity android:name="com.example.uapp.user.UsernameActivity" />
         <activity android:name="com.example.uapp.user.EmailActivity" />
         <activity android:name="com.example.uapp.user.ThemeActivity" />
+        <activity android:name="com.example.uapp.user.UploadWordsActivity" />
         <activity
             android:name=".UserInfoActivity"
             android:exported="false" />

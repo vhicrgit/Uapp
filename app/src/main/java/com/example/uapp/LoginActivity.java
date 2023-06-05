@@ -148,6 +148,8 @@ public class LoginActivity extends AppCompatActivity {
                 initializeUappServiceClient();
                 //登录
                 LoginInfo loginInfo = new LoginInfo();
+                sno = et_sno.getText().toString();
+                passward = et_passward.getText().toString();
                 loginInfo.setStudent_id(sno);
                 loginInfo.setPassword(passward);
                 logInSuccess = UappServiceClient.login(loginInfo);

@@ -14,6 +14,7 @@ import com.example.uapp.config.Config;
 import com.example.uapp.user.ContactActivity;
 import com.example.uapp.user.EmailActivity;
 import com.example.uapp.user.ThemeActivity;
+import com.example.uapp.user.UploadWordsActivity;
 import com.example.uapp.user.UsernameActivity;
 import com.example.uapp.utils.AppearanceUtils;
 
@@ -23,6 +24,7 @@ import androidx.appcompat.widget.Toolbar;
 public class SettingActivity extends AppCompatActivity {
     private SharedPreferences pref;
     private SuperTextView tv_theme;
+    private SuperTextView tv_upload_words;
     private Toolbar toolbar;
 
     @Override
@@ -38,11 +40,19 @@ public class SettingActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(getResources().getColor(Config.themeColor_Text));
         //控件初始化
         tv_theme = findViewById(R.id.tv_theme);
+        tv_upload_words = findViewById(R.id.tv_upload_words);
         //点击事件
         tv_theme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SettingActivity.this, ThemeActivity.class);
+                startActivity(intent);
+            }
+        });
+        tv_upload_words.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingActivity.this, UploadWordsActivity.class);
                 startActivity(intent);
             }
         });

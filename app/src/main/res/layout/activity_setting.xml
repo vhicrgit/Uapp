@@ -32,5 +32,17 @@
             stv:sRightTextColor="@color/gray"
             stv:sRightIconRes="@drawable/ic_right_next" />
 
+        <com.allen.library.SuperTextView
+            android:id="@+id/tv_upload_words"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            stv:sLeftViewMarginLeft="20dp"
+            stv:sLeftTextString="上传自定义词汇"
+            stv:sLeftTextSize="17sp"
+            stv:sLeftTextColor="@color/black"
+            stv:sRightTextSize="17sp"
+            stv:sRightTextColor="@color/gray"
+            stv:sRightIconRes="@drawable/ic_right_next" />
+
     </LinearLayout>
 </ScrollView>
