@@ -124,10 +124,16 @@ public class MainActivity extends AppCompatActivity {
                             lastFragment = 2;
                         }
                         return true;
-                    case R.id.mine_fragment:
+                    case R.id.message_fragment:
                         if (lastFragment != 3) {
                             MainActivity.this.switchFragment(lastFragment, 3);
                             lastFragment = 3;
+                        }
+                        return true;
+                    case R.id.mine_fragment:
+                        if (lastFragment != 4) {
+                            MainActivity.this.switchFragment(lastFragment, 4);
+                            lastFragment = 4;
                         }
                         return true;
                 }

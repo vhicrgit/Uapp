@@ -48,7 +48,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class FoundItemDetailActivity extends AppCompatActivity {
+public class MessageDetailActivity extends AppCompatActivity {
     private SharedPreferences pref;
     TextView itemName;
     TextView lostTime;
@@ -86,7 +86,7 @@ public class FoundItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_found_item_detail);
+        setContentView(R.layout.activity_message_detail);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -124,13 +124,8 @@ public class FoundItemDetailActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("login_info", Context.MODE_PRIVATE);
         user_sno = pref.getString("sno","");
-        if(!Objects.equals(poster_sno, user_sno) || !pref.getBoolean("loggedIn",false)){
-            //若不是该用户发的帖子，不可见该按钮
-            btn_submit.setVisibility(View.INVISIBLE);
-            btn_submit.setEnabled(false);
-        }else{
-            btn_submit.setBackground(getResources().getDrawable(Config.themeColor_Button));
-        }
+
+        btn_submit.setBackground(getResources().getDrawable(Config.themeColor_Button));
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,7 +184,7 @@ public class FoundItemDetailActivity extends AppCompatActivity {
                 imageView.setImageBitmap(BitmapFactory.decodeFile(image_path));
             }
             else{
-                Toast.makeText(FoundItemDetailActivity.this,"获取图片失败",
+                Toast.makeText(MessageDetailActivity.this,"获取图片失败",
                         Toast.LENGTH_SHORT).show();
             }
             closeItemServiceClient();
@@ -215,11 +210,11 @@ public class FoundItemDetailActivity extends AppCompatActivity {
     }
 
     private void showConfirmationDialog() {
-        String message = "点击确认则表明该物品已被认领，确定吗？";
+        String message = "点击确认则表明该物品不是你丢的，确定吗？";
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(message);
         // 设置"注销"两个字的样式
-        int startIndex = message.indexOf("该物品已被认领");
-        int endIndex = startIndex + "该物品已被认领".length();
+        int startIndex = message.indexOf("不是你丢的");
+        int endIndex = startIndex + "不是你丢的".length();
         // 创建一个StyleSpan对象来设置字体样式（加粗）
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         // 创建一个ForegroundColorSpan对象来设置字体颜色（红色）
@@ -249,7 +244,7 @@ public class FoundItemDetailActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void performAction() { new FoundItemDetailActivity.SubmitTask().execute();}
+    private void performAction() { new MessageDetailActivity.SubmitTask().execute();}
 
     private class SubmitTask extends AsyncTask<Void, Void, Boolean> {
         @Override
@@ -257,10 +252,8 @@ public class FoundItemDetailActivity extends AppCompatActivity {
             // 创建Item对象
             try {
                 Boolean res;
-                Log.d("=======set false=======", "set false");
-                Log.d("=======debug_post_id=======", ": "+post_id);
                 initializeUappServiceClient();
-                res = UappServiceClient.setPostFound(post_id,false);
+                res = UappServiceClient.deleteSimilarPost(user_sno,post_id);
                 return res;
             } catch (TException e) {
                 e.printStackTrace();
@@ -271,11 +264,11 @@ public class FoundItemDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result){
             if(result){
                 Log.d("=======debug_post_id=======", ": "+post_id);
-                Toast.makeText(FoundItemDetailActivity.this,"提交成功",
+                Toast.makeText(MessageDetailActivity.this,"修改成功",
                         Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(FoundItemDetailActivity.this,"提交失败",
+                Toast.makeText(MessageDetailActivity.this,"修改失败",
                         Toast.LENGTH_SHORT).show();
             }
             closeItemServiceClient();

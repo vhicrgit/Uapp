@@ -15,6 +15,10 @@
         android:icon="@drawable/ic_msg"
         android:title="失物招领"/>
     <item
+        android:id="@+id/message_fragment"
+        android:icon="@drawable/ic_msg"
+        android:title="信息"/>
+    <item
         android:id="@+id/mine_fragment"
         android:icon="@drawable/ic_mine"
         android:title="我的"/>

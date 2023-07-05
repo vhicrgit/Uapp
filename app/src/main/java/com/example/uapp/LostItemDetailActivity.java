@@ -271,7 +271,8 @@ public class LostItemDetailActivity extends AppCompatActivity {
             // 创建Item对象
             try {
                 Boolean res = false;
-                res = UappServiceClient.setPostInfoFound(post_id,true);
+                initializeUappServiceClient();
+                res = UappServiceClient.setPostFound(post_id,true);
                 Log.d("=======debug_post_id=======", ": "+res);
                 return res;
             } catch (TException e) {
@@ -283,11 +284,11 @@ public class LostItemDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result){
             if(result){
                 Log.d("=======debug_res=======", ": "+post_id);
-                Toast.makeText(LostItemDetailActivity.this,"信息上传成功",
+                Toast.makeText(LostItemDetailActivity.this,"提交成功",
                         Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(LostItemDetailActivity.this,"信息上传失败",
+                Toast.makeText(LostItemDetailActivity.this,"提交失败",
                         Toast.LENGTH_SHORT).show();
             }
             closeItemServiceClient();

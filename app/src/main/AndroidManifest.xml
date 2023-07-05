@@ -63,6 +63,9 @@
             android:name=".FoundItemDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".MessageDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.Uapp.Splash">

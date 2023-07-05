@@ -10,13 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87b6a105-cc43-4e26-8872-9607d38910f2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/user/UploadWordsActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/startpng.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_uploadwords.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/MessageDetailActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/MessageFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_message_detail.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_message.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/navEditor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/navEditor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/SettingActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/SettingActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/FoundItemDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/FoundItemDetailActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/LostItemDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/LostItemDetailActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/AbbrInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/AbbrInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/DetailInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/DetailInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/LoginInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/LoginInfo.java" afterDir="false" />
@@ -25,8 +29,9 @@
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/ReqInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/ReqInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/SetUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/SetUserInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/UappService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/uapp/thr/UappService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_setting.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_setting.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/navigation/uapp_navigation.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/navigation/uapp_navigation.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,13 +121,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ScreenRecorder.SavePath": "C:\\Users\\vhicr\\Desktop\\app创作\\搜索.webm",
+    "ScreenRecorder.SavePath": "C:\\Users\\vhicr\\Desktop\\app创作\\search1.mp4",
     "ScreenshotViewer.SavePath": "C:/Users/vhicr/Desktop/app创作",
     "android-custom-viewC:/Users/Administrator/.gradle/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/bottomnavigation/BottomNavigationView.java_SELECTED": "BottomNavigationView",
     "android-custom-viewC:/Users/vhicr/.gradle/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/bottomnavigation/BottomNavigationView.java_SELECTED": "BottomNavigationView",
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
-    "last_opened_file_path": "D:/WorkSpace/P - Lost & Found App/Uapp/Uapp/app/src/main/res/drawable",
+    "last_opened_file_path": "D:/WorkSpace/P - Lost & Found App/Uapp/Uapp/app/src/main/res/layout",
     "project.structure.last.edited": "Dependencies",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -134,9 +139,9 @@
       <recent name="com.example.uapp" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\WorkSpace\P - Lost &amp; Found App\Uapp\Uapp\app\src\main\res\drawable" />
       <recent name="D:\WorkSpace\P - Lost &amp; Found App\Uapp\Uapp\app\src\main\res\layout" />
       <recent name="D:\WorkSpace\P - Lost &amp; Found App\Uapp\Uapp\app\src\main\java\com\example\uapp\thr" />
+      <recent name="D:\WorkSpace\P - Lost &amp; Found App\Uapp\Uapp\app\src\main\res\drawable" />
       <recent name="D:\WorkSpace\P - Lost &amp; Found App\Uapp\Uapp\app\src\main\res" />
       <recent name="C:\Users\Administrator\Desktop\Uapp\app\src\main\res\mipmap-xhdpi" />
     </key>
@@ -163,12 +168,15 @@
     <key name="android.template.-233944887">
       <recent name="com.example.uapp" />
     </key>
+    <key name="android.template.-251034385">
+      <recent name="com.example.uapp.utils" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.uapp" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.example.uapp.user" />
       <recent name="com.example.uapp" />
+      <recent name="com.example.uapp.user" />
       <recent name="com.example.uapp.util" />
     </key>
   </component>
@@ -326,7 +334,6 @@
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/uapp/LostFragment.java</url>
           <line>91</line>
           <properties class="com.example.uapp.LostFragment" method="onCreateView">
-            <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="9" />
